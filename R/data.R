@@ -20,3 +20,8 @@ gds <- function(data, n, effect_size, seed) {
             D = 0)]
   boot[]
 }
+
+#' @export
+covid <- function() {
+  readRDS("./data/private/covid.rds")
+}
