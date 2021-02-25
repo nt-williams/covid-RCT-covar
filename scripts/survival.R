@@ -5,9 +5,9 @@
 
 library(future)
 
-box::load(simulate)
+box::use(./R/simulate)
 
-reps <- 500
+reps <- 250
 
 covar <- list(c("none"), c("age"), c("sex"), c("o2"), c("dyspnea"), c("hyper"), c("bilat"))
 covar_id <- seq_along(covar)

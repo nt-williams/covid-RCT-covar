@@ -34,5 +34,6 @@ truth <- function(data, type = c("survival", "binary", "ordinal"), ...) {
 }
 
 tds <- function(data, effect_size, horizon) {
-  
+  mean(pmin(data$T + round(stats::rchisq(length(data$T), df = effect_size), 0), horizon) - 
+         pmin(data$T, horizon))
 }

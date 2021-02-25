@@ -4,7 +4,7 @@ box::use(./data, survrct, stats, future, here)
 partition <- function(tasks, covar, id, machines, outpath) {
   rows <- (1:nrow(tasks))[(0:(nrow(tasks) - 1)) %/% (nrow(tasks) / machines) + 1 == id]
   out <- list()
-  globals <- append(ls(), c("rows", "r", "c19"))
+  globals <- append(ls(), c("rows", "r", "c19", "simulate"))
   
   for (r in 1:length(rows)) {
     row <- rows[[r]]
@@ -19,7 +19,7 @@ partition <- function(tasks, covar, id, machines, outpath) {
     }, globals = globals, seed = TRUE)
     saveRDS(future$value(out[[r]]), 
             here$here(outpath, paste0(tasks$type[r], "_", 
-                                      covar[[tasks$covar_id[r]]], "_", 
+                                      tasks$covar_id[r], "_", 
                                       n = tasks$n[r], "_", 
                                       tasks$effect_size[r], "_", 
                                       r, ".rds")))
