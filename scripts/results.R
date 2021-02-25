@@ -3,8 +3,6 @@
 # Department of Population Health Sciences 
 # Weill Cornell Medicine
 
-library(survrct)
-
 box::use(./R/results, 
          ./R/data, 
          data.table[rbindlist], 
