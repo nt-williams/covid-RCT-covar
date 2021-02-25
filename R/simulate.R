@@ -1,4 +1,4 @@
-box::use(./data, survrct, stats, future, here)
+box::use(dgm = ./data, survrct, stats, future, here)
 
 #' @export
 partition <- function(tasks, covar, id, machines, outpath) {
@@ -9,7 +9,7 @@ partition <- function(tasks, covar, id, machines, outpath) {
   for (r in 1:length(rows)) {
     row <- rows[[r]]
     if (tasks$type[row] == "survival") {
-      c19 <- data$covid()
+      c19 <- dgm$covid()
     } 
     out[[r]] <- future$future({
       try(
@@ -30,7 +30,7 @@ simulate <- function(.data, type = c("survival", "binary", "ordinal"), covar, se
   cnt <- match.arg(type)
   args <- list(...)
   if (cnt == "survival") {
-    dat <- data$generate_data(.data, cnt, seed, n = args$n, effect_size = args$effect_size)
+    dat <- dgm$generate_data(.data, cnt, seed, n = args$n, effect_size = args$effect_size)
     if (covar == "none") {
       covar <- NULL
       estimator <- "km"

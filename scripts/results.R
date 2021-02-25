@@ -16,8 +16,7 @@ true <- data$truth(data$covid(), "survival", effect_size = 4, horizon = 14)
 
 res <- list()
 for (i in seq_along(covar)) {
-  out <- lapply(dir_ls(here("data", "res"), 
-                       regex = glue("survival_{i}_*")), readRDS)
+  out <- lapply(dir_ls(here("data", "res"), regex = glue("survival_{i}_*")), readRDS)
   res[[covar[[i]]]] <- results$clean(out)
 }
 
