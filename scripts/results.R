@@ -4,7 +4,7 @@
 # Weill Cornell Medicine
 
 box::use(./R/results, 
-         ./R/data, 
+         dgm = ./R/data, 
          data.table[rbindlist], 
          fs[dir_ls], 
          here[here], 
@@ -12,7 +12,7 @@ box::use(./R/results,
 
 covar <- list(c("none"), c("age"), c("sex"), c("o2"), c("dyspnea"), c("hyper"), c("bilat"))
 
-true <- data$truth(data$covid(), "survival", effect_size = 4, horizon = 14)
+true <- dgm$truth(dgm$covid(), "survival", effect_size = 4, horizon = 14)
 
 res <- list()
 for (i in seq_along(covar)) {
