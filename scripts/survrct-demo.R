@@ -9,7 +9,7 @@ box::use(dgm = ./R/data)
 
 c19 <- dgm$generate_data(dgm$covid(), "survival", 25435, n = 500, effect_size = 4)
 
-fit <- survrct(Surv(T, D) ~ A + age + sex + o2, target = "A", 
+fit <- survrct(Surv(days, event) ~ A + o2, target = "A", 
                data = c19, coarsen = 1, estimator = "tmle")
 
 rmst(fit, 14)
