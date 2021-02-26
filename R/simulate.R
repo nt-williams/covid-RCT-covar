@@ -37,7 +37,7 @@ simulate <- function(.data, type = c("survival", "binary", "ordinal"), covar, se
     } else {
       estimator <- "tmle"
     }
-    f <- stats$as.formula(paste0("Surv(T, D) ~ ", paste(c("A", covar), collapse = " + ")))
+    f <- stats$as.formula(paste0("Surv(days, event) ~ ", paste(c("A", covar), collapse = " + ")))
     surv <- suppressWarnings(survrct$survrct(f, "A", data = dat, estimator = estimator))
     survrct$rmst(surv, 14)
   }

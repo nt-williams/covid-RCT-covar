@@ -33,7 +33,9 @@ DT$setnames(c19, names(c19),
             c("days", "event", "age", "sex", "bmi", "smoke", 
               "o2", "num_comorbid", "num_symptoms", "bilat"))
 
-c19[event == 0, days := 15]
-c19[event == 1 & days > 15, `:=`(days = 15, event = 0)]
+c19 <- 
+  c19[!(event == 0 & days < 15)
+      ][event == 0, days := 15
+        ][event == 1 & days > 15, `:=`(days = 15, event = 0)]
 
 saveRDS(c19, here("data", "private", "covid-update.rds"))
