@@ -1,15 +1,24 @@
-box::use(here[here], data.table[setDT], stats)
+box::use(here[here], data.table[setDT, copy], stats)
 
 #' @export
-generate_data <- function(data, type = c("survival", "binary", "ordinal"), seed, ...) {
+generate_data <- function(data, type = c("survival", "binary", "ordinal"), 
+                          prognostic = TRUE, seed, ...) {
   args <- list(...)
   switch(match.arg(type), 
-         survival = gds(data, args$n, args$effect_size, seed))
+         survival = gds(data, args$n, args$effect_size, prognostic, seed))
 }
 
-gds <- function(data, n, effect_size, seed) {
+gds <- function(data, n, effect_size, prognostic, seed) {
   set.seed(seed)
-  boot <- setDT(data[sample(nrow(data), n, replace = TRUE), ])
+  if (prognostic) {
+    boot <- setDT(data[sample(nrow(data), n, replace = TRUE), ])
+  } else {
+    days <- data$mpg
+    boot <- copy(data)
+    boot[, days := NULL]
+    boot <- cbind(boot[sample(nrow(boot)), ], days)
+    boot <- boot[sample(nrow(boot), n, replace = TRUE), ]
+  }
   K <- max(boot$days)
   boot[, A := stats$rbinom(n, 1, 0.5)]
   boot[event == 1 & A == 1, days := days + round(stats$rchisq(.N, df = effect_size), 0)]
