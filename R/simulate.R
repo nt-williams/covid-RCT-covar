@@ -1,4 +1,4 @@
-box::use(dgm = ./data, survrct, stats, future, here)
+box::use(dgm = ./data, survrct, stats, future)
 
 #' @export
 partition <- function(tasks, covar, id, machines, outpath) {
@@ -13,16 +13,16 @@ partition <- function(tasks, covar, id, machines, outpath) {
     } 
     out[[r]] <- future$future({
       try(
-        simulate(c19, tasks$type[r], covar[[tasks$covar_id[r]]], tasks$seed[r], 
-                 n = tasks$n[r], effect_size = tasks$effect_size[r])
+        simulate(c19, tasks$type[row], covar[[tasks$covar_id[row]]], tasks$seed[row], 
+                 n = tasks$n[row], effect_size = tasks$effect_size[row])
       )
     }, globals = globals, seed = TRUE)
     saveRDS(future$value(out[[r]]), 
-            here$here(outpath, paste0(tasks$type[r], "_", 
-                                      tasks$covar_id[r], "_", 
-                                      n = tasks$n[r], "_", 
-                                      tasks$effect_size[r], "_", 
-                                      r, ".rds")))
+            file.path(outpath, paste0(tasks$type[row], "_", 
+                                      tasks$covar_id[row], "_", 
+                                      n = tasks$n[row], "_", 
+                                      tasks$effect_size[row], "_", 
+                                      row, ".rds")))
   }
 }
 

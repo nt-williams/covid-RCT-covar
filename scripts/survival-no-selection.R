@@ -13,7 +13,7 @@ id <- as.numeric(Sys.getenv("SLURM_ARRAY_TASK_ID"))
 machines <- 1000
 op <- here("data", "res")
 
-reps <- 1
+reps <- 1000
 n <- c(250, 500, 1500)
 effect_size <- c(2, 4)
 
