@@ -13,7 +13,7 @@ gds <- function(data, n, effect_size, prognostic, seed) {
   if (prognostic) {
     boot <- setDT(data[sample(nrow(data), n, replace = TRUE), ])
   } else {
-    days <- data$mpg
+    days <- data$days
     boot <- copy(data)
     boot[, days := NULL]
     boot <- cbind(boot[sample(nrow(boot)), ], days)
