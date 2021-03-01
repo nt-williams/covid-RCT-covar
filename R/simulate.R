@@ -13,8 +13,8 @@ partition <- function(tasks, covar, id, machines, outpath) {
     } 
     out[[r]] <- future$future({
       try(
-        simulate(c19, tasks$type[row], covar[[tasks$covar_id[row]]], tasks$seed[row], 
-                 n = tasks$n[row], effect_size = tasks$effect_size[row])
+        simulate(c19, tasks$type[row], covar[[tasks$covar_id[row]]], tasks$prog[row], tasks$seed[row], 
+                 lasso = tasks$lasso[row], n = tasks$n[row], effect_size = tasks$effect_size[row])
       )
     }, globals = globals, seed = TRUE)
     saveRDS(future$value(out[[r]]), 
@@ -22,23 +22,35 @@ partition <- function(tasks, covar, id, machines, outpath) {
                                       tasks$covar_id[row], "_", 
                                       n = tasks$n[row], "_", 
                                       tasks$effect_size[row], "_", 
+                                      tasks$prog[row], "_",
+                                      tasks$lasso[row], "_",
                                       row, ".rds")))
   }
 }
 
-simulate <- function(.data, type = c("survival", "binary", "ordinal"), covar, seed, ...) {
+simulate <- function(.data, type = c("survival", "binary", "ordinal"), 
+                     covar, prognostic, seed, ...) {
   cnt <- match.arg(type)
   args <- list(...)
   if (cnt == "survival") {
-    dat <- dgm$generate_data(.data, cnt, seed, n = args$n, effect_size = args$effect_size)
-    if (covar == "none") {
+    dat <- dgm$generate_data(.data, cnt, prognostic, seed, n = args$n, effect_size = args$effect_size)
+    if (covar[1] == "none") {
       covar <- NULL
       estimator <- "km"
     } else {
       estimator <- "tmle"
     }
     f <- stats$as.formula(paste0("Surv(days, event) ~ ", paste(c("A", covar), collapse = " + ")))
-    surv <- suppressWarnings(survrct$survrct(f, "A", data = dat, estimator = estimator))
-    survrct$rmst(surv, 14)
+    surv <- suppressWarnings(survrct$survrct(f, "A", data = dat, estimator = estimator, lasso = args$lasso))
+    est <- survrct$rmst(surv, 14)
+    if (args$lasso && estimator == "tmle") {
+      fits <- survrct$get_fits(surv)
+      out <- list(res = est, 
+                  hazard = as.matrix(stats$coef(fits$Hazard)), 
+                  cens = as.matrix(stats$coef(fits$Censoring)), 
+                  treatment = as.matrix(stats$coef(fits$Treatment)))
+      return(out)
+    }
+    return(est)
   }
 }

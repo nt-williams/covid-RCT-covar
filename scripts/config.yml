@@ -1,0 +1,27 @@
+default:
+  machines: 1000
+  reps: 1000
+  nobs: !expr c(250, 500, 1500)
+  
+test: 
+  machines: 1
+  reps: 1
+  type: "survival"
+  covar: !expr list(c("none"), c("age"))
+  prog: TRUE
+  lasso: TRUE
+  es: !expr c(2)
+  
+spns: 
+  type: "survival"
+  covar: !expr list(c("none"), c("age"), c("sex"), c("bmi"), c("o2"), c("smoke"), c("num_comorbid"), c("num_symptoms"), c("bilat"), c("age", "o2"), c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat"))
+  prog: TRUE
+  lasso: FALSE
+  es: !expr c(2, 4)
+  
+sps:
+  type: "survival"
+  covar: !expr list(c("none"), c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat"))
+  prog: TRUE
+  lasso: TRUE
+  es: !expr c(2, 4)
