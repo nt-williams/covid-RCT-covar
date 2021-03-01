@@ -1,6 +1,13 @@
 box::use(dt = data.table, purrr[map_dfr], stats[qnorm, var])
 
 #' @export
+clean <- function(type = c("survival", "ordinal"), fits, ...) {
+  args <- list(...)
+  if (match.arg(type) == "survial") {
+    clean_surv(fits, args$lasso)
+  }
+}
+
 clean_surv <- function(fits, lasso = FALSE) {
   map_dfr(fits, function(fit) {
     if (lasso && class(fit) != "rmst") {
@@ -11,6 +18,15 @@ clean_surv <- function(fits, lasso = FALSE) {
     dt$data.table(theta = fit$estimates[[1]]$theta, 
                   std.error = fit$estimates[[1]]$std.error)
   })
+}
+
+clean_surv_select <- function(fits) {
+  haz <- map_dfr(fits, ~ as.data.table(as.list(.x$hazard[, 1] != 0)))
+  cens <- map_dfr(fits, ~ as.data.table(as.list(.x$cens[, 1] != 0)))
+  trt <- map_dfr(fits, ~ as.data.table(as.list(.x$treatment[, 1] != 0)))
+  list(hazard = haz, 
+       cens = cens, 
+       trt = trt)
 }
 
 #' @export
