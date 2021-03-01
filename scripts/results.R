@@ -10,7 +10,6 @@ setwd("/home/niw4001/covid-RCT-covar")
 box::use(./R/results, 
          dgm = ./R/data, 
          data.table[rbindlist, setDT], 
-         fs[dir_ls], 
          here[here], 
          glue[glue], 
          config[get])

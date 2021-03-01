@@ -31,4 +31,4 @@ sps:
   covar: !expr list(c("none"), c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat"))
   prog: TRUE
   lasso: TRUE
-  es: !expr c(2, 4)
+  es: !expr c(0, 2, 4)

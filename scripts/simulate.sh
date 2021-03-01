@@ -9,6 +9,6 @@ echo "$SLURM_ARRAY_TASK_ID"
 
 source ~/.bashrc
 spack load -r /bxc56dm
-Rscript survival-no-selection.R
+Rscript simulate.R
 
 exit 0

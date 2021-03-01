@@ -33,9 +33,9 @@ clean_surv_select <- function(fits) {
 #' @export
 summary <- function(data, truth) {
   out <- data[, .(power = mean(abs(theta / std.error) > qnorm(1 - 0.05 / 2)), 
-           mse = mean((theta - truth)^2), 
-           bias = mean(theta - truth), 
-           var = var(theta)), .(covar, n, es)]
+                  mse = mean((theta - truth)^2), 
+                  bias = mean(theta - truth), 
+                  var = var(theta)), .(covar, n, es)][order(n, es)]
   ref <- rep(out[covar == 1 & n == out$n & es == out$es, mse], each = length(unique(out$covar)))
   out[, rel.eff := mse / ref][]
 }
