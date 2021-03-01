@@ -8,7 +8,7 @@
 box::use(./R/simulate, here[here], config[get])
 
 args <- commandArgs(trailingOnly = TRUE)
-config <- get(file = here("scripts", "config.yml"), config = args[1])
+config <- get(file = here("scripts", "config.yml"), config = "spns")
 
 id <- as.numeric(Sys.getenv("SLURM_ARRAY_TASK_ID"))
 op <- here("data", "res")

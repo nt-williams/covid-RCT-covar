@@ -8,6 +8,7 @@ clean <- function(type = c("survival", "ordinal"), fits, ...) {
   }
 }
 
+#' @export
 clean_surv <- function(fits, lasso = FALSE) {
   map_dfr(fits, function(fit) {
     if (lasso && class(fit) != "rmst") {
