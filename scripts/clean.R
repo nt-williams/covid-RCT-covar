@@ -27,15 +27,16 @@ c19 <-
               ][, num_sympt := rowSums(.SD[, ..sympt])
                 ][, .(days_outcome_cens, event_intubation_or_death, age_cdc_cats, sex, bmi, 
                       smoke_vape, supp_o2_within_3hrs_any, num_comorbid, num_sympt,
-                      initial_chest_x_ray_findings_bilateral_infiltrates)]
+                      initial_chest_x_ray_findings_bilateral_infiltrates, 
+                      symptoms_dyspnea, hypertension)]
 
 DT$setnames(c19, names(c19), 
             c("days", "event", "age", "sex", "bmi", "smoke", 
-              "o2", "num_comorbid", "num_symptoms", "bilat"))
+              "o2", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
 
 c19 <- 
   c19[!(event == 0 & days < 15)
       ][event == 0, days := 15
-        ][event == 1 & days > 15, `:=`(days = 15, event = 0)]
+        ][event == 1 & days > 15, `:=`(days = 15)]
 
 saveRDS(c19, here("data", "private", "covid-update.rds"))
