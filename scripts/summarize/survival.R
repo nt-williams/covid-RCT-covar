@@ -28,16 +28,16 @@ res[, covar := DT$fcase(covar == 1, "Unadjusted",
                         covar == 2, "Age", 
                         covar == 3, "Sex", 
                         covar == 4, "BMI", 
-                        covar == 5, "Supplemental O2", 
+                        covar == 5, "Supp. O2", 
                         covar == 6, "Smoking status", 
                         covar == 7, "No. comorbid", 
                         covar == 8, "No. symptoms", 
-                        covar == 9, "X-ray bilat. infiltrates", 
-                        covar == 10, "Age and supplemental O2", 
-                        covar == 11, "All new covariates", 
-                        covar == 12, "All original covariates", 
-                        covar == 13, "LASSO, all new covariates", 
-                        covar == 14, "LASSO, all orig. covariates")]
+                        covar == 9, "X-ray bilat. infilt.", 
+                        covar == 10, "Age and supp. O2", 
+                        covar == 11, "New covar.", 
+                        covar == 12, "Original covar.", 
+                        covar == 13, "LASSO, new covar.", 
+                        covar == 14, "LASSO, orig. covar.")]
 
 knitr$kable(results$summary(res[es == 0], 0)[order(n, mse, covar)], 
             digits = 2, format = "latex", booktabs = TRUE)

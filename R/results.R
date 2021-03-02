@@ -36,6 +36,6 @@ summary <- function(data, truth) {
                   mse = mean((theta - truth)^2), 
                   bias = mean(theta - truth), 
                   var = var(theta)), .(covar, n, es)][order(n, es)]
-  ref <- rep(out[covar == 1 & n == out$n & es == out$es, mse], each = length(unique(out$covar)))
+  ref <- rep(out[covar == "Unadjusted" & n == out$n & es == out$es, mse], each = length(unique(out$covar)))
   out[, rel.eff := mse / ref][]
 }
