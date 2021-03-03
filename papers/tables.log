@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.4.7)  1 MAR 2021 21:08
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.4.7)  3 MAR 2021 11:13
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -217,17 +217,17 @@ urvival time in a
  []
 
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 62.
+(Font)              <7> on input line 63.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 62.
+(Font)              <5> on input line 63.
 
-Underfull \hbox (badness 10000) in paragraph at lines 66--66
+Underfull \hbox (badness 10000) in paragraph at lines 67--67
 []\T1/fvm/m/n/10 Table 2: |Results for a survival outcome and restricted mean s
 urvival time in a
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 116--116
+Underfull \hbox (badness 10000) in paragraph at lines 118--118
 []\T1/fvm/m/n/10 Table 3: |Results for a survival outcome and restricted mean s
 urvival time in a
  []
@@ -245,11 +245,11 @@ Here is how much of TeX's memory you used:
  18960 multiletter control sequences out of 15000+600000
  532958 words of font info for 26 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 41i,9n,42p,257b,274s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 41i,9n,42p,235b,274s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/t
 exlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texl
 ive/2020/texmf-dist/fonts/type1/public/bera/fvmr8a.pfb>
-Output written on tables.pdf (3 pages, 18669 bytes).
+Output written on tables.pdf (3 pages, 18529 bytes).
 PDF statistics:
  23 PDF objects out of 1000 (max. 8388607)
  15 compressed objects within 1 object stream
