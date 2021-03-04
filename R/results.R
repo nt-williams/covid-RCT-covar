@@ -12,12 +12,17 @@ clean <- function(type = c("survival", "ordinal"), fits, ...) {
 clean_surv <- function(fits, lasso = FALSE) {
   map_dfr(fits, function(fit) {
     if (lasso && class(fit) != "rmst") {
-      out <- dt$data.table(theta = fit$res$estimates[[1]]$theta, 
-                           std.error = fit$res$estimates[[1]]$std.error)
+      out <- try(dt$data.table(theta = fit$res$estimates[[1]]$theta, 
+                               std.error = fit$res$estimates[[1]]$std.error))
+      if (!(inherits(out, "try-error"))) {
+        return(out)
+      }
+    }
+    out <- try(dt$data.table(theta = fit$estimates[[1]]$theta, 
+                             std.error = fit$estimates[[1]]$std.error))
+    if (!(inherits(out, "try-error"))) {
       return(out)
     }
-    dt$data.table(theta = fit$estimates[[1]]$theta, 
-                  std.error = fit$estimates[[1]]$std.error)
   })
 }
 
@@ -33,9 +38,9 @@ clean_surv_select <- function(fits) {
 #' @export
 summary <- function(data, truth) {
   out <- data[, .(power = mean(abs(theta / std.error) > qnorm(1 - 0.05 / 2)), 
-                  mse = mean((theta - truth)^2), 
-                  bias = mean(theta - truth), 
-                  var = var(theta)), .(covar, n, es)][order(n, es)]
-  ref <- rep(out[covar == "Unadjusted" & n == out$n & es == out$es, mse], each = length(unique(out$covar)))
+           mse = mean((theta - truth)^2), 
+           bias = mean(theta - truth), 
+           var = var(theta)), .(covar, n, es)]
+  ref <- rep(out[covar == 1 & n == out$n & es == out$es, mse], each = length(unique(out$covar)))
   out[, rel.eff := mse / ref][]
 }
