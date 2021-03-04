@@ -8,7 +8,7 @@ library(survrct)
 box::use(dgm = ./R/data)
 
 c19 <- dgm$generate_data(dgm$covid(), "survival", seed = 32412, 
-                         prognostic = TRUE, n = 500, effect_size = 4)
+                         prognostic = FALSE, n = 500, effect_size = 4)
 
 fit <- survrct(Surv(days, event) ~ A + o2 + + age + smoke + num_comorbid, 
                target = "A", data = c19, coarsen = 1, estimator = "tmle", lasso = TRUE)

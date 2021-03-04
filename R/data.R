@@ -13,10 +13,10 @@ gds <- function(data, n, effect_size, prognostic, seed) {
   if (prognostic) {
     boot <- setDT(data[sample(nrow(data), n, replace = TRUE), ])
   } else {
-    days <- data$days
+    hold <- data[, .(days, event)]
     boot <- copy(data)
-    boot[, days := NULL]
-    boot <- cbind(boot[sample(nrow(boot)), ], days)
+    boot[, `:=`(days = NULL, event = NULL)]
+    boot <- cbind(boot[sample(nrow(boot)), ], hold)
     boot <- boot[sample(nrow(boot), n, replace = TRUE), ]
   }
   K <- max(boot$days)
