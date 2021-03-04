@@ -19,8 +19,8 @@ true4 <- mean(replicate(1e4, dgm$truth(c19, "survival", effect_size = 4, horizon
 spns <- readRDS(here("data", "spns.rds"))
 sps <- readRDS(here("data", "sps.rds"))
 
-sps[, `:=`(covar = DT$fcase(covar == 1, 13, covar == 2, 14), 
-           id = id + 108)]
+sps[, `:=`(covar = covar + 15, 
+           id = id + 135)]
 
 res <- rbind(spns, sps)
 
@@ -33,11 +33,15 @@ res[, covar := DT$fcase(covar == 1, "Unadjusted",
                         covar == 7, "No. comorbid", 
                         covar == 8, "No. symptoms", 
                         covar == 9, "X-ray bilat. infilt.", 
-                        covar == 10, "Age and supp. O2", 
-                        covar == 11, "New covar.", 
-                        covar == 12, "Original covar.", 
-                        covar == 13, "LASSO, new covar.", 
-                        covar == 14, "LASSO, orig. covar.")]
+                        covar == 10, "Dyspnea", 
+                        covar == 11, "Hypertension", 
+                        covar == 12, "Age & supp. O2", 
+                        covar == 13, "Set A", 
+                        covar == 14, "Set B", 
+                        covar == 15, "All", 
+                        covar == 16, "LASSO, A", 
+                        covar == 17, "LASSO, B", 
+                        covar == 18, "LASSO, all")]
 
 knitr$kable(results$summary(res[es == 0], 0)[order(n, mse, covar)], 
             digits = 2, format = "latex", booktabs = TRUE)
