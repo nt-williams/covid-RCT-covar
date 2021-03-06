@@ -3,9 +3,9 @@ box::use(dt = data.table, purrr[map_dfr], stats[qnorm, var])
 #' @export
 clean <- function(type = c("survival", "ordinal"), fits, ...) {
   args <- list(...)
-  if (match.arg(type) == "survial") {
-    clean_surv(fits, args$lasso)
-  }
+  switch(match.arg(type), 
+         survival = clean_surv(fits, args$lasso), 
+         ordinal = clean_ord(fits))
 }
 
 #' @export
@@ -20,6 +20,17 @@ clean_surv <- function(fits, lasso = FALSE) {
     }
     out <- try(dt$data.table(theta = fit$estimates[[1]]$theta, 
                              std.error = fit$estimates[[1]]$std.error))
+    if (!(inherits(out, "try-error"))) {
+      return(out)
+    }
+  })
+}
+
+#' @export
+clean_ord <- function(fits) {
+  map_dfr(fits, function(fit) {
+    out <- try(dt$data.table(theta = fit$log_odds$est[3], 
+                             std.error = sqrt(fit$log_odds$ci$cov_est[3])))
     if (!(inherits(out, "try-error"))) {
       return(out)
     }

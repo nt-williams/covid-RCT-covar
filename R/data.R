@@ -1,4 +1,4 @@
-box::use(here[here], data.table[setDT, copy], stats, teachingApps[rbeta4])
+box::use(here[here], data.table[setDT, copy], stats, teachingApps[rbeta4, dbeta4], graphics[curve])
 
 #' @export
 generate_data <- function(data, type = c("survival", "binary", "ordinal"), 
@@ -33,9 +33,10 @@ gds <- function(data, n, effect_size, prognostic, seed) {
   boot[]
 }
 
-plot_beta <- function(shape1, shape2) {
+#' @export
+plot_beta <- function(effect_size) {
   betar <- function(x) {
-    dbeta4(x, 0, 5, shape1, shape2)
+    dbeta4(x, 0, 5, effect_size, 5)
   }
   curve(betar, 0, 5, 1000)
 }
@@ -64,8 +65,8 @@ gdo <- function(data, n, effect_size, prognostic, seed) {
 #' @export
 covid <- function(type = c("survival", "ordinal")) {
   switch(match.arg(type), 
-         survival = readRDS(here("data", "private", "covid-update.rds")), 
-         ordinal = readRDS(here("data", "private", "covid_14day_ordinal.rds")))
+         survival = readRDS(here("data", "private", "covid-survival.rds")), 
+         ordinal = readRDS(here("data", "private", "covid-ordinal.rds")))
 }
 
 #' @export
@@ -73,7 +74,7 @@ truth <- function(data, type = c("survival", "binary", "ordinal"), ...) {
   args <- list(...)
   switch(match.arg(type), 
          survival = tds(data, args$effect_size, args$horizon), 
-         ordinal = tdo(data, args$s1, args$s2))
+         ordinal = tdo(data, args$effect_size))
 }
 
 tds <- function(data, effect_size, horizon) {
