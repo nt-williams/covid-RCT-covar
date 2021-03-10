@@ -4,46 +4,34 @@ box::use(dt = data.table, purrr[map_dfr], stats[qnorm, var])
 clean <- function(type = c("survival", "ordinal"), fits, ...) {
   args <- list(...)
   switch(match.arg(type), 
-         survival = clean_surv(fits, args$lasso), 
+         survival = clean_surv(fits), 
          ordinal = clean_ord(fits))
 }
 
 #' @export
-clean_surv <- function(fits, lasso = FALSE) {
+clean_surv <- function(fits) {
   map_dfr(fits, function(fit) {
-    if (lasso && class(fit) != "rmst") {
-      out <- try(dt$data.table(theta = fit$res$estimates[[1]]$theta, 
-                               std.error = fit$res$estimates[[1]]$std.error))
+      out <- try(dt$data.table(rmst = fit$res$rmst$estimates[[1]]$theta, 
+                               rmst.std.error = fit$res$rmst$estimates[[1]]$std.error, 
+                               survprob = fit$res$survprob$estimates[[1]]$theta, 
+                               survprob.std.error = fit$res$survprob$estimates[[1]]$std.error))
       if (!(inherits(out, "try-error"))) {
         return(out)
       }
-    }
-    out <- try(dt$data.table(theta = fit$estimates[[1]]$theta, 
-                             std.error = fit$estimates[[1]]$std.error))
-    if (!(inherits(out, "try-error"))) {
-      return(out)
-    }
   })
 }
 
 #' @export
 clean_ord <- function(fits) {
   map_dfr(fits, function(fit) {
-    out <- try(dt$data.table(theta = fit$log_odds$est[3], 
-                             std.error = sqrt(fit$log_odds$ci$cov_est[3])))
+    out <- try(dt$data.table(log_or = fit$res$log_or$estimates$lor$theta, 
+                             log_or.std.error = fit$res$log_or$estimates$std.error, 
+                             mannwhit = fit$res$mannwhit$estimates$theta, 
+                             mannwhit.std.error = fit$res$mannwhit$estimates$std.error[1, ]))
     if (!(inherits(out, "try-error"))) {
       return(out)
     }
   })
-}
-
-clean_surv_select <- function(fits) {
-  haz <- map_dfr(fits, ~ as.data.table(as.list(.x$hazard[, 1] != 0)))
-  cens <- map_dfr(fits, ~ as.data.table(as.list(.x$cens[, 1] != 0)))
-  trt <- map_dfr(fits, ~ as.data.table(as.list(.x$treatment[, 1] != 0)))
-  list(hazard = haz, 
-       cens = cens, 
-       trt = trt)
 }
 
 #' @export

@@ -7,7 +7,8 @@ box::use(here[here], DT = data.table)
 
 # survival ----------------------------------------------------------------
 
-c19 <- readRDS(here("data", "private", "covid-raw.rds"))
+c19 <- readRDS(here("data", "private", "intubation_0h.rds"))
+# c19 <- readRDS(here("data", "private", "covid-raw.rds"))
 
 DT$setDT(c19)
 
@@ -27,7 +28,7 @@ c19 <-
           ][, num_comorbid := rowSums(.SD[, ..comorbid])
             ][, (sympt) := lapply(.SD, function(x) DT$fifelse(x == "Yes", 1, 0)), .SDcols = sympt
               ][, num_sympt := rowSums(.SD[, ..sympt])
-                ][, .(days_outcome_cens, event_intubation_or_death, age_cdc_cats, sex, bmi, 
+                ][, .(days_outcome_cens, event_intubation_or_death, age, sex, bmi, 
                       smoke_vape, supp_o2_within_3hrs_any, num_comorbid, num_sympt,
                       initial_chest_x_ray_findings_bilateral_infiltrates, 
                       symptoms_dyspnea, hypertension)]
@@ -81,4 +82,3 @@ DT$setkey(ord, "empi")
 c19 <- na.omit(c19[ord])
 
 saveRDS(c19, here("data", "private", "covid-ordinal.rds"))
-

@@ -1,5 +1,4 @@
-box::use(dgm = ./data, survrct[survrct, rmst, get_fits], 
-         stats, future, drord[drord]) # using modified version of drord package to capture std error of log OR estimates
+box::use(dgm = ./data, adjrct[...], stats, future)
 
 #' @export
 partition <- function(tasks, covar, id, machines, outpath) {
@@ -47,26 +46,35 @@ simulate <- function(.data, type = c("survival", "ordinal"),
     }
     f <- stats$as.formula(paste0("Surv(days, event) ~ ", paste(c("A", covar), collapse = " + ")))
     surv <- suppressWarnings(survrct(f, "A", data = dat, estimator = estimator, lasso = args$lasso))
-    est <- rmst(surv, 14)
+    est_rmst <- rmst(surv, 14)
+    est_sp <- survprob(surv, 14)
     if (args$lasso && estimator == "tmle") {
       fits <- get_fits(surv)
-      out <- list(res = est, 
+      out <- list(res = list(rmst = est_rmst, survprob = est_sp), 
                   hazard = as.matrix(stats$coef(fits$Hazard)), 
                   cens = as.matrix(stats$coef(fits$Censoring)), 
                   treatment = as.matrix(stats$coef(fits$Treatment)))
       return(out)
     }
-    return(est)
+    return(list(res = list(rmst = est_rmst, survprob = est_sp)))
   } else if (cnt == "ordinal") {
     dat <- dgm$generate_data(.data, cnt, prognostic, seed, n = args$n, effect_size = args$effect_size)
+
     if (covar[1] == "none") {
-      f <- "1"
+      f <- stats$as.formula("state_ordinal ~ A")
     } else {
-      f <- paste(covar, collapse = " + ")
+      f <- stats$as.formula(paste0("state_ordinal ~ ", paste(c("A", covar), collapse = " + ")))
     }
-    fit <- drord(out = dat$state_ordinal, treat = dat$A, covar = dat, 
-                 out_form = f, treat_form = f, param = "log_odds", 
-                 ci = "wald", stratify = FALSE, est_dist = FALSE)
-    return(fit)
+    ord <- ordinalrct(f, target = "A", data = dat, estimator = "tmle", lasso = args$lasso)
+    est_lor <- log_or(ord)
+    est_mw <- mannwhitney(ord)
+    if (args$lasso) {
+      fits <- get_fits(ord)
+      out <- list(res = list(log_or = est_lor, mannwhit = est_mw), 
+                  hazard = as.matrix(stats$coef(fits$Hazard)), 
+                  treatment = as.matrix(stats$coef(fits$Treatment)))
+      return(out)
+    }
+    return(list(res = list(log_or = est_lor, mannwhit = est_mw)))
   }
 }

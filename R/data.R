@@ -59,7 +59,7 @@ gdo <- function(data, n, effect_size, prognostic, seed) {
            round(rbeta4(.N, 0, 5, effect_size, 15, seed = seed), 0)]
     boot[, state_ordinal := pmax(state_ordinal, K)]
   }
-  boot[]
+  boot[, state_ordinal := ordered(state_ordinal)][]
 }
 
 #' @export
@@ -70,7 +70,7 @@ covid <- function(type = c("survival", "ordinal")) {
 }
 
 #' @export
-truth <- function(data, type = c("survival", "binary", "ordinal"), ...) {
+truth <- function(data, type = c("survival", "ordinal"), ...) {
   args <- list(...)
   switch(match.arg(type), 
          survival = tds(data, args$effect_size, args$horizon), 
