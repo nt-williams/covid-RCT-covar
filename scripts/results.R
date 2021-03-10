@@ -3,9 +3,9 @@
 # Department of Population Health Sciences 
 # Weill Cornell Medicine
 
-# .libPaths("/home/niw4001/R_local")
+.libPaths("/home/niw4001/R_local")
 
-# setwd("/home/niw4001/covid-RCT-covar")
+setwd("/home/niw4001/covid-RCT-covar")
 
 box::use(./R/results, 
          dgm = ./R/data, 
@@ -15,7 +15,7 @@ box::use(./R/results,
          config[get])
 
 args <- commandArgs(trailingOnly = TRUE)
-config <- get(file = here("scripts", "config.yml"), config = "opns")
+config <- get(file = here("scripts", "config.yml"), config = args[1])
 
 tasks <- expand.grid(covar = seq_along(config$covar), prog = config$prog,
                      lasso = config$lasso, n = config$nobs, es = config$es)
@@ -32,4 +32,4 @@ for (i in 1:nrow(tasks)) {
 
 res <- merge(tasks, rbindlist(res, idcol = "id"))
 
-saveRDS(here("data", paste0(args[1], ".rds")))
+saveRDS(res, here("data", paste0(args[1], ".rds")))
