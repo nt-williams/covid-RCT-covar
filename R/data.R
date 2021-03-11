@@ -73,31 +73,46 @@ covid <- function(type = c("survival", "ordinal")) {
 truth <- function(data, type = c("survival", "ordinal"), ...) {
   args <- list(...)
   switch(match.arg(type), 
-         survival = tds(data, args$effect_size, args$horizon), 
-         ordinal = tdo(data, args$effect_size))
+         survival = tds(data, args$effect_size, args$estimand), 
+         ordinal = tdo(data, args$effect_size, args$estimand))
 }
 
-tds <- function(data, effect_size, horizon) {
-  mean(pmin(data$days + round(stats$rchisq(length(data$days), df = effect_size), 0), horizon) - 
-         pmin(data$days, horizon))
+tds <- function(data, effect_size, estimand = c("rmst", "sp")) {
+  if (match.arg(estimand) == "rmst") {
+    return(mean(pmin(data$days + round(stats$rchisq(length(data$days), df = effect_size), 0), 14) - 
+                  pmin(data$days, 14)))
+  }
+  time_1 <- data$days + round(stats$rchisq(length(data$days), df = effect_size), 0)
+  time_0 <- data$days
+  mean(time_1 == 14) - mean(time_0 == 14)
 }
 
-tdo <- function(data, effect_size) {
-  states_1 <- pmax(data$state_ordinal - 
-                     round(rbeta4(nrow(data), 0, 5, effect_size, 15, sample(53443, 1)), 0))
+tdo <- function(data, effect_size, estimand = c("lor", "mw")) {
+  states_1 <- pmax(data$state_ordinal - round(rbeta4(nrow(data), 0, 5, effect_size, 15, sample(53443, 1)), 0), 0)
   states_0 <- data$state_ordinal
-  probs_1 <- vector("numeric", 6)
-  probs_0 <- probs_1
+  cdf_1 <- vector("numeric", 6)
+  cdf_0 <- cdf_1
   for (i in 0:5) {
-    probs_1[i + 1] <- mean(states_1 <= i)
-    probs_0[i + 1] <- mean(states_0 <= i)
+    cdf_1[i + 1] <- mean(states_1 <= i)
+    cdf_0[i + 1] <- mean(states_0 <= i)
+  }
+  
+  if (match.arg(estimand) == "mw") {
+    pmf_1 <- vector("numeric", 6)
+    pmf_0 <- pmf_1
+    for (i in 0:5) {
+      pmf_1[i + 1] <- mean(states_1 == i)
+      pmf_0[i + 1] <- mean(states_0 == i)
+    }
+    
+    return(sum((c(0, cdf_0)[-6] + 0.5*pmf_0) * pmf_1))
   }
   
   lo_1 <- vector("numeric", 5)
   lo_0 <- lo_1
   for (i in 1:5) {
-    lo_1[i] <- log(probs_1[i] / (1 - probs_1[i]))
-    lo_0[i] <- log(probs_0[i] / (1 - probs_0[i]))
+    lo_1[i] <- log(cdf_1[i] / (1 - cdf_1[i]))
+    lo_0[i] <- log(cdf_0[i] / (1 - cdf_0[i]))
   }
   mean(lo_1) - mean(lo_0)
 }
