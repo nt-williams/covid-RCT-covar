@@ -84,7 +84,7 @@ tds <- function(data, effect_size, estimand = c("rmst", "sp")) {
   }
   time_1 <- data$days + round(stats$rchisq(length(data$days), df = effect_size), 0)
   time_0 <- data$days
-  mean(time_1 == 14) - mean(time_0 == 14)
+  mean(time_1 > 7) - mean(time_0 > 7)
 }
 
 tdo <- function(data, effect_size, estimand = c("lor", "mw")) {

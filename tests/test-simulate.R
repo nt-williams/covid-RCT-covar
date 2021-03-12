@@ -24,3 +24,18 @@ x <- lapply(1:50, function(x) {
 })
 
 results$clean("survival", x)
+
+box::use(./R/simulate, config[get], future[...])
+
+config <- get(file = "./scripts/config.yml", config = "spns")
+
+id <- 1
+op <- "./data/res"
+mch <- config$machines
+
+tasks <- expand.grid(type = config$type, covar_id = seq_along(config$covar),
+                     lasso = config$lasso, prog = config$prog, 
+                     seed = sample(5346436, config$reps), 
+                     n = config$nobs, effect_size = config$es, stringsAsFactors = FALSE)
+
+simulate$partition(tasks, config$covar, id, mch, op)
