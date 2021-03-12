@@ -4,15 +4,21 @@
 \usepackage[scaled]{beramono}
 \renewcommand*\familydefault{\ttdefault} %% Only if the base font of the document is to be typewriter style
 \usepackage[T1]{fontenc}
-\usepackage{geometry}
+\usepackage[top=0.5in, bottom=0.5in, left=0.5in, right=0.9in]{geometry}
 \usepackage{graphicx}
 \usepackage{caption}
-\usepackage{biblatex}
+%\usepackage{biblatex}
 \usepackage[utf8]{inputenc}
 
-\addbibresource{references.bib}
+% bibliography format
+\usepackage[authoryear]{natbib}
+\bibpunct{(}{)}{;}{a}{}{,}
+
+%\addbibresource{references.bib}
 
 \captionsetup[table]{skip=10pt}
+\setlength{\parskip}{1em}
+\setlength{\parindent}{0pt}
 
 \title{
  {Efficiency gains in randomized trials for COVID-19 treatments by adjusting for specific covariates}\\
@@ -30,15 +36,64 @@
 
 \section{Introduction}
 
-\section{Statistical Estimands}
+\subsection{Covariate adjustment in RCTs}
+
+\section{Statistical Estimands and Estimators}
+
+(don't get into describing the actual algorithm, more just properties
+can use the LASSO with it and maintain valid standard errors)
 
 \subsection{Survival outcome}
 
+\newtheorem{surv}{Estimand}
+
+For a time-to-event outcome, we consider two measures of treatment effect: the difference in the restricted mean survival time (RMST) and the difference in survival probability (also referred to as the risk difference, RD). 
+
+\begin{surv}[Difference in restricted mean survival time]
+\label{rmst}
+\end{surv}
+\[E(\textnormal{min}\{T, \tau\} | A = 1) - E(\textnormal{min}\{T, \tau\} | A = 0)\]
+
+\begin{surv}[Difference in survival probability]
+\label{rmst}
+\end{surv}
+\[P(T \leq t | A = 1) - P(T \leq t | A = 0)\]
+
 \subsection{Ordinal outcome}
 
-\section{Description of Data}
+\newtheorem{ord}{Estimand}
+
+We consider two treatment effect estimands for an ordinal outcome: the average log-odds ratio (LOR) and the Mann-Whitney (MW) estimand. With an ordinal outcome taking levels $1, ..., K$ and without loss of generality, we will assume that lower values of the outcome are preferred. 
+
+\begin{ord}[Average log-odds ratio]
+\label{lor}
+\end{ord}
+\[\frac{1}{K - 1} \sum_{j = 1}^{K - 1}\textnormal{log} \left( \frac{\textnormal{odds}(Y \leq j | A = 1)}{\textnormal{odds}(Y \leq j | A = 0)} \right)\]
+
+\begin{ord}[Mann-Whitney]
+\label{MW}
+\end{ord}
+\[ P(\tilde{Y} > Y|\tilde{A} = 1, A = 0) + \frac{1}{2}P(\tilde{Y} = Y | \tilde{A} = 1, A = 0) \]
 
 \section{Simulation Methods}
+
+Our data generating distribution is based on a database of over 1,500 patients hospitalized at Weill Cornell Medicine New York Presbyterian Hospital prior to 15 May 2020. For a description of the clinical characteristics and data collection methods of the initial cohort sampling, see \citet{goyalNEJM}.
+
+For both outcomes, we evaluated the following predictive variables: age, sex, BMI, smoking status, whether the patient required supplemental oxygen within three-hours of presenting to the Emergency Department, number of comorbidities (diabetes, hypertension, COPD, CKD, ESRD, asthma, interstitial lung disease, obstructive sleep apnea, any rheumatological disease, any pulmonary disease, hepatitis or HIV, renal disease, stroke, cirrhosis, coronary artery disease, active cancer), number of relevant symptoms, presence of bilateral infiltrates on chest x-ray, dyspnea, and hypertension. Patient data were resampled with replacement to generate 1000 datasets of size $n = 100, 250, 500 \textnormal{ and } 1500$. For each dataset, a treatment value was draw for each patient with probability 0.5 from a Bernoulli distribution.
+
+For each generated dataset, we evaluated the estimands of interest with the following conditions: unadjusted;  adjusting for each individual covariate; adjusting for age, sex, BMI, smoking status, whether the patient required supplemental oxygen, number of comorbidities, number of symptoms, and presence of bilateral infiltrates on chest x-ray (set A); adjusting for age, sex, whether the patient required supplemental oxygen, dyspnea, hypertension, presence of bilateral infiltrates on chest x-ray (set B); adjusting for all covariates. In addition, for covariate sets involving multiple covariates we also performed an additional set of simulations with variable selection done using the LASSO (insert LASSO citation).
+
+\subsection{Survival outcome}
+
+For the survival outcome, the outcome is defined as the time from hospitalization to intubation or death. We focused on estimating the difference in RMST at 14 days after hospitalization and the difference in survival probability at 7 days after hospitalization. A positive treatment effect was simulated by adding an independent random draw from a $\chi^2$ distribution with varying degrees of freedom (to produce different effect sizes) to each patient's observed survival time in the treatment arm. These effect sizes translate to a difference in RMSTs of 0.55 and 1.07, and RDs of 0.04 and 0.10, respectively. To simulate uninformative censoring, 5\% of the patients were selected at random to be censored with censoring times drawn from a Uniform distribution, $U(1, 14)$. 
+
+\subsection{Ordinal outcome}
+
+We defined a six-level ordinal outcome at 14 days post-hospitalization based on the WHO Ordinal Scale for Clinical Improvement (INSERT CITATION). The categories are as follows: 0, discharged from hospital; 1, hospitalized with no oxygen theraphy; 2, hospitalized with oxygen by mask or nasal prong; 3, hospitalized with non-invasive ventilation or high-flow oxygen; 4, hospitalized with intubation and mechanical ventilation; 5, dead.
+
+A positive treatment effect was simulated by subtracting from the treatment arm an independent random draw from a four-parameter Beta distribution with support $x \in [0, 5]$, $\textnormal{Beta}(\alpha, 15)$; we sampled from distributions with the $\alpha$ parameter set to 1.5 and three to generate different effect sizes. These effect sizes corresponds to an LOR of 0.22 and 0.60, an a Mann-Whitney value of 0.49 and 0.46 respectively. 
+
+\subsection{Performance criteria}
 
 \section{Simulation Results}
 
@@ -46,9 +101,9 @@
 
 \section{References}
 
-\printbibliography
+%\printbibliography
+\bibliography{references}
 
 \appendix
-\include{tables}
 
 \end{document}
