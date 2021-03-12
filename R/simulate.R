@@ -81,7 +81,7 @@ simulate <- function(.data, type = c("survival", "ordinal"),
     #               treatment = as.matrix(stats$coef(fits$Treatment)))
     #   return(out)
     # }
-    return(list(log_or = est_lor$estimates$lor$theta, 
+    return(list(log_or = est_lor$estimates$lor, 
                 log_or.std.error = est_lor$estimates$std.error,
                 mannwhit = est_mw$estimates$theta, 
                 mannwhit.std.error = as.vector(est_mw$estimates$std.error)))
