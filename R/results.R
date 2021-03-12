@@ -1,4 +1,4 @@
-box::use(dt = data.table, purrr[map_dfr], stats[qnorm, var])
+box::use(dt = data.table, purrr[map_dfr], stats[qnorm, var], knitr[kable])
 
 #' @export
 clean <- function(type = c("survival", "ordinal"), fits, ...) {
@@ -35,16 +35,15 @@ clean_ord <- function(fits) {
 }
 
 #' @export
-summary <- function(data, var, std, truth) {
+summary <- function(data, var, std, truth, null = 0) {
   out <- dt$copy(data)
   dt$setnames(out, c(var, std), c("theta", "std.error"))
-  out <- out[, .(power = mean(abs(theta / std.error) > qnorm(1 - 0.05 / 2), na.rm = TRUE), 
+  out <- out[, .(power = mean(abs((theta - null) / std.error) > qnorm(1 - 0.05 / 2), na.rm = TRUE), 
                  mse = mean((theta - truth)^2, na.rm = TRUE), 
-                 bias = mean(theta - truth, na.rm = TRUE), 
-                 var = var(theta, na.rm = TRUE)), .(covar_id, n, es)]
+                 bias = mean(theta - truth, na.rm = TRUE)), .(covar_id, n, es)]
   ref <- rep(out[covar_id == "Unadjusted" & n == out$n & es == out$es, mse], 
              each = length(unique(out$covar_id)))
-  out[, rel.eff := mse / ref][]
+  out[, rel.eff := mse / ref][order(n, mse)]
 }
 
 #' @export
@@ -67,4 +66,9 @@ label <- function(data) {
                            covar_id == 16, "LASSO, A", 
                            covar_id == 17, "LASSO, B", 
                            covar_id == 18, "LASSO, all")]
+}
+
+#' @export
+kbt <- function(x) {
+  kable(x, digits = 2, format = "latex", linesep = "")
 }

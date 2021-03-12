@@ -6,21 +6,49 @@
 box::use(./R/simulate, ./R/results, dgm = ./R/data, config[get])
 
 c19 <- dgm$covid("ordinal")
-tmp <- dgm$generate_data(c19, "ordinal", TRUE, 43253, n = 500, effect_size = 3)
+tmp <- dgm$generate_data(c19, "ordinal", TRUE, 24122, n = 100, effect_size = 3)
 
-x <- lapply(1:50, function(x) {
-  simulate$simulate(c19, "ordinal", "none", TRUE, sample(44353, 1), 
-                    n = 500, effect_size = 3, lasso = FALSE)
+library(adjrct)
+
+meta <- ordinalrct(state_ordinal ~ A, target = "A", estimator = "tmle", data = tmp)
+log_or(meta)
+pmf(meta)
+
+meta <- ordinalrct(state_ordinal ~ A + age + o2 + dyspnea + hyper + smoke, target = "A", estimator = "tmle", data = tmp, lasso = TRUE)
+log_or(meta)
+pmf(meta)
+
+test <- function() {
+  seed <- sample(44353, 1)
+  print(simulate$simulate(c19, "ordinal", "none",
+                    TRUE, seed, 
+                    n = 100, effect_size = 3, lasso = TRUE))
+  cat(seed)
+}
+
+
+
+
+simulate$simulate(c19, "ordinal", "none",
+                  TRUE, sample(44353, 1), 
+                  n = 100, effect_size = 3, lasso = TRUE)
+
+x <- lapply(1:10, function(x) {
+  simulate$simulate(c19, "ordinal", c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat"),
+                    TRUE, sample(44353, 1), 
+                    n = 100, effect_size = 3, lasso = TRUE)
 })
 
-results$clean("ordinal", x)
 
 c19 <- dgm$covid("survival")
-tmp <- dgm$generate_data(c19, "survival", TRUE, 43253, n = 500, effect_size = 3)
+tmp <- dgm$generate_data(c19, "survival", TRUE, 5436, n = 100, effect_size = 3)
+
+meta <- adjrct::survrct(Surv(days, event) ~ A, target = "A", estimator = "tmle", data = tmp)
+adjrct::survprob(meta, 7)
 
 x <- lapply(1:50, function(x) {
-  simulate$simulate(c19, "survival", c("age", "o2", "bmi"), TRUE, sample(44353, 1), 
-                    n = 500, effect_size = 3, lasso = FALSE)
+  simulate$simulate(c19, "survival", "none", TRUE, sample(44353, 1), 
+                    n = 100, effect_size = 3, lasso = FALSE)
 })
 
 results$clean("survival", x)
