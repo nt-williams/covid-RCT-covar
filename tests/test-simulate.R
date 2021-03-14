@@ -6,7 +6,7 @@
 box::use(./R/simulate, ./R/results, dgm = ./R/data, config[get])
 
 c19 <- dgm$covid("ordinal")
-tmp <- dgm$generate_data(c19, "ordinal", TRUE, 24122, n = 100, effect_size = 3)
+tmp <- dgm$generate_data(c19, "ordinal", FALSE, 24122, n = 100, effect_size = 3)
 
 library(adjrct)
 

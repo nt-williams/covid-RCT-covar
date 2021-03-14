@@ -48,7 +48,7 @@ gdo <- function(data, n, effect_size, prognostic, seed) {
   } else {
     hold <- data[, .(state_ordinal)]
     boot <- copy(data)
-    boot[, state := NULL]
+    boot[, `:=`(state = NULL, state_ordinal = NULL)]
     boot <- cbind(boot[sample(nrow(boot)), ], hold)
     boot <- boot[sample(nrow(boot), n, replace = TRUE), ]
   }
