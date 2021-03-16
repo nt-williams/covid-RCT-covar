@@ -1,0 +1,23 @@
+<%
+printTab <- function(data) {
+  for (i in 1:nrow(data)) {
+    if (i %in% c(18, 36, 54)) {
+      cat(paste(data[i, ], collapse = " && "), "\\\\", "\\midrule", "\n")
+    } else if (i == nrow(data)) {
+      cat(paste(data[i, ], collapse = " && "), "\\\\")
+    }
+    else {
+      cat(paste(data[i, ], collapse = " && "), "\\\\", "\n")
+    }
+  }
+}
+%>
+{\tabcolsep=6pt  % hold it local
+\begin{longtable}{lccccccc}
+\caption{Results for a survival outcome and restricted mean survival time in a hospitalized population.}\label{tab1}\\
+Covariate(s) & N & Effect & P(Reject H$_0$) & MSE x N & Bias & Rel. eff.\\ \midrule
+<%=printTab(data)%>
+\bottomrule
+\hline
+\end{longtable}
+}

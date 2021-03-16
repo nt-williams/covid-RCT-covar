@@ -9,61 +9,89 @@ test:
   type: "ordinal"
   covar: !expr list(c("none"), c("age"))
   prog: TRUE
-  lasso: TRUE
+  algo: "lasso"
   es: !expr c(2)
  
 spns: 
   type: "survival"
-  covar: !expr list(c("none"), c("age"), c("sex"), c("bmi"), c("o2"), c("smoke"), c("num_comorbid"), c("num_symptoms"), c("bilat"), c("dyspnea"), c("hyper"), c("age", "o2"), c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat"), c("age", "sex", "o2", "dyspnea", "hyper", "bilat"), c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  covar: !expr list(c("none"), c("age"), c("sex"), c("bmi"), c("o2"), c("smoke"), c("num_comorbid"), c("num_symptoms"), c("bilat"), c("dyspnea"), c("hyper"), c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
   prog: TRUE
-  lasso: FALSE
+  algo: "glm"
   es: !expr c(0, 2, 4)
 
 sps: 
   type: "survival"
-  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat"), c("age", "sex", "o2", "dyspnea", "hyper", "bilat"), c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  covar: !expr list(c("none"), c("age"), c("sex"), c("bmi"), c("o2"), c("smoke"), c("num_comorbid"), c("num_symptoms"), c("bilat"), c("dyspnea"), c("hyper"), c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
   prog: TRUE
-  lasso: TRUE
+  algo: "lasso"
+  es: !expr c(0, 2, 4)
+  
+sprf: 
+  type: "survival"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: TRUE
+  algo: "rf"
   es: !expr c(0, 2, 4)
   
 snpns: 
   type: "survival"
-  covar: !expr list(c("none"), c("age"), c("sex"), c("bmi"), c("o2"), c("smoke"), c("num_comorbid"), c("num_symptoms"), c("bilat"), c("dyspnea"), c("hyper"), c("age", "o2"), c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat"), c("age", "sex", "o2", "dyspnea", "hyper", "bilat"), c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  covar: !expr list(c("none"), c("age"), c("sex"), c("bmi"), c("o2"), c("smoke"), c("num_comorbid"), c("num_symptoms"), c("bilat"), c("dyspnea"), c("hyper"), c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
   prog: FALSE
-  lasso: FALSE
+  algo: "glm"
   es: !expr c(0, 2, 4)
 
 snps: 
   type: "survival"
-  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat"), c("age", "sex", "o2", "dyspnea", "hyper", "bilat"), c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
   prog: FALSE
-  lasso: TRUE
+  algo: "lasso"
+  es: !expr c(0, 2, 4)
+  
+snprf:
+  type: "survival"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: FALSE
+  algo: "rf"
   es: !expr c(0, 2, 4)
   
 opns: 
   type: "ordinal"
-  covar: !expr list(c("none"), c("age"), c("sex"), c("bmi"), c("o2"), c("smoke"), c("num_comorbid"), c("num_symptoms"), c("bilat"), c("dyspnea"), c("hyper"), c("age", "o2"), c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat"), c("age", "sex", "o2", "dyspnea", "hyper", "bilat"), c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  covar: !expr list(c("none"), c("age"), c("sex"), c("bmi"), c("o2"), c("smoke"), c("num_comorbid"), c("num_symptoms"), c("bilat"), c("dyspnea"), c("hyper"), c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
   prog: TRUE
-  lasso: FALSE
+  algo: "glm"
   es: !expr c(0, 1.5, 3)
 
 ops: 
   type: "ordinal"
-  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat"), c("age", "sex", "o2", "dyspnea", "hyper", "bilat"), c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
   prog: TRUE
-  lasso: TRUE
+  algo: "lasso"
+  es: !expr c(0, 1.5, 3)
+  
+oprf: 
+  type: "ordinal"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: TRUE
+  algo: "rf"
   es: !expr c(0, 1.5, 3)
   
 onpns: 
   type: "ordinal"
-  covar: !expr list(c("none"), c("age"), c("sex"), c("bmi"), c("o2"), c("smoke"), c("num_comorbid"), c("num_symptoms"), c("bilat"), c("dyspnea"), c("hyper"), c("age", "o2"), c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat"), c("age", "sex", "o2", "dyspnea", "hyper", "bilat"), c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  covar: !expr list(c("none"), c("age"), c("sex"), c("bmi"), c("o2"), c("smoke"), c("num_comorbid"), c("num_symptoms"), c("bilat"), c("dyspnea"), c("hyper"), c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
   prog: FALSE
-  lasso: FALSE
+  algo: "glm"
   es: !expr c(0, 1.5, 3)
 
 onps: 
   type: "ordinal"
-  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat"), c("age", "sex", "o2", "dyspnea", "hyper", "bilat"), c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
   prog: FALSE
-  lasso: TRUE
+  algo: "lasso"
+  es: !expr c(0, 1.5, 3)
+  
+onprf: 
+  type: "ordinal"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: FALSE
+  algo: "rf"
   es: !expr c(0, 1.5, 3)

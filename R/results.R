@@ -69,6 +69,10 @@ label <- function(data) {
 }
 
 #' @export
+make_table <- function(data) {
+  brew::brew("./scripts/table.brew")
+}
+
 kbt <- function(x) {
   kable(x, digits = 2, format = "latex", linesep = "")
 }

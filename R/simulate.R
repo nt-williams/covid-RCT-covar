@@ -14,7 +14,7 @@ partition <- function(tasks, covar, id, machines, outpath) {
     }
     out[[r]] <- try(
         simulate(c19, tasks$type[row], covar[[tasks$covar_id[row]]], tasks$prog[row], tasks$seed[row], 
-                 lasso = tasks$lasso[row], n = tasks$n[row], effect_size = tasks$effect_size[row])
+                 algo = tasks$algo[row], n = tasks$n[row], effect_size = tasks$effect_size[row])
       )
     
     if (!inherits(out[[r]], "try-error")) {
@@ -23,13 +23,13 @@ partition <- function(tasks, covar, id, machines, outpath) {
       out[[r]]["n"] <- tasks$n[row]
       out[[r]]["es"] <- tasks$effect_size[row]
       out[[r]]["progs"] <- tasks$prog[row]
-      out[[r]]["lasso"] <- tasks$lasso[row]
+      out[[r]]["algo"] <- tasks$algo[row]
     }
   }
   saveRDS(out, 
           file.path(outpath, paste0(tasks$type[row], "_", 
                                     tasks$prog[row], "_",
-                                    tasks$lasso[row], "_",
+                                    tasks$algo[row], "_",
                                     id, ".rds")))
 }
 
@@ -42,12 +42,9 @@ simulate <- function(.data, type = c("survival", "ordinal"),
     dat <- dgm$generate_data(.data, cnt, prognostic, seed, n = args$n, effect_size = args$effect_size)
     if (covar[1] == "none") {
       covar <- NULL
-      estimator <- "km"
-    } else {
-      estimator <- "tmle"
     }
     f <- stats$as.formula(paste0("Surv(days, event) ~ ", paste(c("A", covar), collapse = " + ")))
-    surv <- suppressWarnings(survrct(f, "A", data = dat, estimator = estimator, lasso = args$lasso))
+    surv <- suppressWarnings(survrct(f, "A", data = dat, estimator = "tmle", algo = args$algo))
     est_rmst <- rmst(surv, 14)
     est_sp <- survprob(surv, 7)
     # if (args$lasso && estimator == "tmle") {
@@ -71,7 +68,7 @@ simulate <- function(.data, type = c("survival", "ordinal"),
     } else {
       f <- stats$as.formula(paste0("state_ordinal ~ ", paste(c("A", covar), collapse = " + ")))
     }
-    ord <- ordinalrct(f, target = "A", data = dat, estimator = "tmle", lasso = args$lasso)
+    ord <- ordinalrct(f, target = "A", data = dat, estimator = "tmle", algo = args$algo)
     est_lor <- log_or(ord)
     est_mw <- mannwhitney(ord)
     # if (args$lasso) {
