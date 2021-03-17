@@ -9,10 +9,13 @@
 \usepackage{caption}
 %\usepackage{biblatex}
 \usepackage[utf8]{inputenc}
+\usepackage[document]{ragged2e}
 
 % bibliography format
 \usepackage[authoryear]{natbib}
 \bibpunct{(}{)}{;}{a}{}{,}
+
+\bibliographystyle{apa}
 
 %\addbibresource{references.bib}
 
@@ -21,7 +24,7 @@
 \setlength{\parindent}{0pt}
 
 \title{
- {Efficiency gains in randomized trials for COVID-19 treatments by adjusting for specific covariates}\\
+ {Efficiency gains in randomized trials for COVID-19 using specific covariates and performing variable selection with LASSO and random forests}\\
 }
 \author{Nicholas Williams, Iván Díaz, Michael Rosenblum}
 \date{\today}
@@ -31,57 +34,74 @@
 \maketitle
 
 \begin{abstract}
-   Simulation study of covariate adjustment for efficiency gains in COVID-19 randomized clinical trials.
 \end{abstract}
 
 \section{Introduction}
 
 \subsection{Covariate adjustment in RCTs}
 
+\citep{covid19power}
+
 \section{Statistical Estimands and Estimators}
 
-(don't get into describing the actual algorithm, more just properties
-can use the LASSO with it and maintain valid standard errors)
+\citep{vanderLaanRubin2006}
+\citep{diaz2019improved}
+\citep{diazOrdinal}
+
+\begin{itemize}
+  \item double-robust estimators
+  \item consistent under correct specification of either treatment or outcome, guaranteed with the RCT.
+  \item can use the LASSO and still get valid standard errors
+\end{itemize}
 
 \subsection{Survival outcome}
 
 \newtheorem{surv}{Estimand}
 
-For a time-to-event outcome, we consider two measures of treatment effect: the difference in the restricted mean survival time (RMST) and the difference in survival probability (also referred to as the risk difference, RD). 
+For a time-to-event outcome, we consider two measures of treatment effect: the difference in the restricted mean survival time (RMST) and the difference in survival probability (also referred to as the risk difference, RD). Let $A$ be a binary treatment indicator where $1$ indicates assignment to the treatment arm and $0$ and indicates assignment to the control arm. In addition, let $T$ denote a patients survival time.
 
 \begin{surv}[Difference in restricted mean survival time]
 \label{rmst}
 \end{surv}
+
+The difference in restricted mean survival time is defined as the difference in the expected survival time between treatment and control arms when time is truncated at an arbitrary point, $\tau$.
+
 \[E(\textnormal{min}\{T, \tau\} | A = 1) - E(\textnormal{min}\{T, \tau\} | A = 0)\]
 
 \begin{surv}[Difference in survival probability]
 \label{rmst}
 \end{surv}
-\[P(T \leq t | A = 1) - P(T \leq t | A = 0)\]
+\[P(T > t | A = 1) - P(T > t | A = 0)\]
 
 \subsection{Ordinal outcome}
 
 \newtheorem{ord}{Estimand}
 
-We consider two treatment effect estimands for an ordinal outcome: the average log-odds ratio (LOR) and the Mann-Whitney (MW) estimand. With an ordinal outcome taking levels $1, ..., K$ and without loss of generality, we will assume that lower values of the outcome are preferred. 
+We consider two treatment effect estimands for an ordinal outcome: the average log-odds ratio (LOR) and the Mann-Whitney (MW) estimand. We define an ordinal outcome taking levels $1, ..., K$ and without loss of generality, we will assume that lower values of the outcome are preferred. 
 
 \begin{ord}[Average log-odds ratio]
 \label{lor}
 \end{ord}
+
+If the proportional odds assumption is correct, this value is equal to the corresponding coefficient from a proportional odds model (commonly referred to as ordinal logistic regression).
+
 \[\frac{1}{K - 1} \sum_{j = 1}^{K - 1}\textnormal{log} \left( \frac{\textnormal{odds}(Y \leq j | A = 1)}{\textnormal{odds}(Y \leq j | A = 0)} \right)\]
 
 \begin{ord}[Mann-Whitney]
 \label{MW}
 \end{ord}
-\[ P(\tilde{Y} > Y|\tilde{A} = 1, A = 0) + \frac{1}{2}P(\tilde{Y} = Y | \tilde{A} = 1, A = 0) \]
+
+The Mann-Whitney statistic is interpreted as the probability that a patient drawn at random from the treatment group has a greater outcome value than a patient drawn at random from the control group, with ties broken at random.
+
+\[ P(Y^* > Y|A^* = 1, A = 0) + \frac{1}{2}P(Y^* = Y |A^* = 1, A = 0) \]
 
 \section{Simulation Methods}
 
 Our data generating distribution is based on a database of over 1,500 patients hospitalized at Weill Cornell Medicine New York Presbyterian Hospital prior to 15 May 2020. For a description of the clinical characteristics and data collection methods of the initial cohort sampling, see \citet{goyalNEJM}.
 
-For both outcomes, we evaluated the following predictive variables: age, sex, BMI, smoking status, whether the patient required supplemental oxygen within three-hours of presenting to the Emergency Department, number of comorbidities (diabetes, hypertension, COPD, CKD, ESRD, asthma, interstitial lung disease, obstructive sleep apnea, any rheumatological disease, any pulmonary disease, hepatitis or HIV, renal disease, stroke, cirrhosis, coronary artery disease, active cancer), number of relevant symptoms, presence of bilateral infiltrates on chest x-ray, dyspnea, and hypertension. Patient data were resampled with replacement to generate 1000 datasets of size $n = 100, 250, 500 \textnormal{ and } 1500$. For each dataset, a treatment value was draw for each patient with probability 0.5 from a Bernoulli distribution.
+For both outcome types, we evaluated the following auxillary covariates: age, sex, BMI, smoking status, whether the patient required supplemental oxygen within three-hours of presenting to the Emergency Department, number of comorbidities (diabetes, hypertension, COPD, CKD, ESRD, asthma, interstitial lung disease, obstructive sleep apnea, any rheumatological disease, any pulmonary disease, hepatitis or HIV, renal disease, stroke, cirrhosis, coronary artery disease, active cancer), number of relevant symptoms, presence of bilateral infiltrates on chest x-ray, dyspnea, and hypertension. Patient data were resampled with replacement to generate 1000 datasets of size $n = 100, 250, 500 \textnormal{ and } 1500$. For each dataset, a treatment value was draw for each patient with probability 0.5 from a Bernoulli distribution.
 
-For each generated dataset, we evaluated the estimands of interest with the following conditions: unadjusted;  adjusting for each individual covariate; adjusting for age, sex, BMI, smoking status, whether the patient required supplemental oxygen, number of comorbidities, number of symptoms, and presence of bilateral infiltrates on chest x-ray (set A); adjusting for age, sex, whether the patient required supplemental oxygen, dyspnea, hypertension, presence of bilateral infiltrates on chest x-ray (set B); adjusting for all covariates. In addition, for covariate sets involving multiple covariates we also performed an additional set of simulations with variable selection done using the LASSO (insert LASSO citation).
+For each generated dataset, we evaluated the estimands of interest with the following conditions: unadjusted;  adjusting for each individual covariate; adjusting for all covariates; adjusting for all covariates using the LASSO \citep{tibLASSO}; adjusting for all covariates using random forests. In scenarios using the LASSO or random forest, all nuisance parameters were estimated with LASSO while only the outcome and censoring models were estimated using random forests and an intercept only model was used to estimate the propensity. In addition, the use of random forests was evaluated with and without cross-fitting \citep{cfVictor}. All simulation scenarios were also repeated after shuffling covariates to remove any association between the covariate and observed outcomes.
 
 \subsection{Survival outcome}
 
@@ -96,6 +116,18 @@ A positive treatment effect was simulated by subtracting from the treatment arm 
 \subsection{Performance criteria}
 
 \section{Simulation Results}
+
+Tables containing the comprehensive results of simulations are presented in the Appendix.
+
+\begin{itemize}
+  \item Supplemental O2 provides the greatest efficiency gains
+  \item As sample size increases, the LASSO and RF provides largest efficiency gains
+  \item Without variable selection, adjusting for non-prognostic variables results in efficiency losses
+  \item The LASSO maintains efficieny when covariates are not predictive of the outcome
+  \item The LASSO and RF handle zeros in an ordinal outcome while GLM becomes unstable
+  \item Without cross-fitting, RF overfits but remains un-biased because the propensity is still correctly specified 
+  \item With cross-fitting, RF...
+\end{itemize}
 
 \section{Recommendations}
 

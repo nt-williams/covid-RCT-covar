@@ -1,0 +1,50 @@
+\begin{thebibliography}{}
+
+\bibitem[\protect\astroncite{Benkeser et~al.}{}]{covid19power}
+Benkeser, D., Díaz, I., Luedtke, A., Segal, J., Scharfstein, D., and
+  Rosenblum, M.
+\newblock Improving precision and power in randomized trials for covid-19
+  treatments using covariate adjustment, for binary, ordinal, and time-to-event
+  outcomes.
+\newblock {\em Biometrics}.
+
+\bibitem[\protect\astroncite{Chernozhukov et~al.}{2018}]{cfVictor}
+Chernozhukov, V., Chetverikov, D., Demirer, M., Duflo, E., Hansen, C., Newey,
+  W., and Robins, J. (2018).
+\newblock Double/debiased machine learning for treatment and structural
+  parameters.
+\newblock {\em The Econometrics Journal}, 21(1):C1--C68.
+
+\bibitem[\protect\astroncite{Díaz et~al.}{2019}]{diaz2019improved}
+Díaz, I., Colantuoni, E., Hanley, D.~F., and Rosenblum, M. (2019).
+\newblock Improved precision in the analysis of randomized trials with survival
+  outcomes, without assuming proportional hazards.
+\newblock {\em Lifetime data analysis}, 25(3):439--468.
+
+\bibitem[\protect\astroncite{Díaz et~al.}{2016}]{diazOrdinal}
+Díaz, I., Colantuoni, E., and Rosenblum, M. (2016).
+\newblock Enhanced precision in the analysis of randomized trials with ordinal
+  outcomes.
+\newblock {\em Biometrics}, 72(2):422--431.
+
+\bibitem[\protect\astroncite{Goyal et~al.}{2020}]{goyalNEJM}
+Goyal, P., Choi, J.~J., Pinheiro, L.~C., Schenck, E.~J., Chen, R., Jabri, A.,
+  Satlin, M.~J., Campion, T.~R., Nahid, M., Ringel, J.~B., Hoffman, K.~L.,
+  Alshak, M.~N., Li, H.~A., Wehmeyer, G.~T., Rajan, M., Reshetnyak, E., Hupert,
+  N., Horn, E.~M., Martinez, F.~J., Gulick, R.~M., and Safford, M.~M. (2020).
+\newblock Clinical characteristics of covid-19 in new york city.
+\newblock {\em New England Journal of Medicine}, 382(24):2372--2374.
+
+\bibitem[\protect\astroncite{Tibshirani}{1996}]{tibLASSO}
+Tibshirani, R. (1996).
+\newblock Regression shrinkage and selection via the lasso.
+\newblock {\em Journal of the Royal Statistical Society: Series B
+  (Methodological)}, 58(1):267--288.
+
+\bibitem[\protect\astroncite{van~der Laan and
+  Rubin}{2006}]{vanderLaanRubin2006}
+van~der Laan, M.~J. and Rubin, D. (2006).
+\newblock Targeted maximum likelihood learning.
+\newblock {\em The International Journal of Biostatistics}, 2(1).
+
+\end{thebibliography}

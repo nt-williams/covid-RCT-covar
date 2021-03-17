@@ -4,7 +4,7 @@ all: pdf
 
 main.pdf: main.tex references.bib
 	pdflatex main
-	biber main
+	bibtex main
 	pdflatex main
 	pdflatex main
 
