@@ -2,12 +2,12 @@
 printTab <- function(data) {
   data <- format(data, nsmall = 2)
   for (i in 1:nrow(data)) {
-    if (i %in% c(13, 26, 39)) {
-      cat(paste(data[i, ], collapse = " & "), "\\\\", "\\midrule", "\n")
-    } else if (i == nrow(data)) {
-      cat(paste(data[i, ], collapse = " & "), "\\\\")
+    if (i == nrow(data)) {
+      return(cat(paste(data[i, ], collapse = " & "), "\\\\"))
     }
-    else {
+    if (data[i, "n"] != data[i + 1, "n"]) {
+      cat(paste(data[i, ], collapse = " & "), "\\\\", "\\midrule()", "\n")
+    } else {
       cat(paste(data[i, ], collapse = " & "), "\\\\", "\n")
     }
   }
@@ -15,7 +15,7 @@ printTab <- function(data) {
 %>
 {\tabcolsep=6pt  % hold it local
 \begin{longtable}{lccccccc}
-\caption{""} \\
+\caption{<%=caption%>} \\
 Covariate(s) & N & Effect & P(Reject H$_0$) & MSE x N & Bias & Rel. eff.\\ \midrule
 <%=printTab(.data)%>
 \bottomrule

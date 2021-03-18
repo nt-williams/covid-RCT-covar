@@ -24,7 +24,7 @@
 \setlength{\parindent}{0pt}
 
 \title{
- {Efficiency gains in randomized trials for COVID-19 using specific covariates and performing variable selection with LASSO and random forests}\\
+ {Efficiency gains in randomized trials for COVID-19: Variable selection for covariate adjustment}\\
 }
 \author{Nicholas Williams, Iván Díaz, Michael Rosenblum}
 \date{\today}
@@ -121,12 +121,13 @@ Tables containing the comprehensive results of simulations are presented in the 
 
 \begin{itemize}
   \item Supplemental O2 provides the greatest efficiency gains
-  \item As sample size increases, the LASSO and RF provides largest efficiency gains
+  \item Overall, LASSO offers the best balance between type-1 error control and efficiency improvements, despite sample size or outcome type
   \item Without variable selection, adjusting for non-prognostic variables results in efficiency losses
   \item The LASSO maintains efficieny when covariates are not predictive of the outcome
-  \item The LASSO and RF handle zeros in an ordinal outcome while GLM becomes unstable
-  \item Without cross-fitting, RF overfits but remains un-biased because the propensity is still correctly specified 
-  \item With cross-fitting, RF...
+  \item The LASSO and RF handle zeros in an ordinal outcome while GLM becomes unstable; this issue goes aways as sample size increases
+  \item Without cross-fitting and at large sample sizes, RF overfits but remains un-biased because the propensity is still correctly specified (goes with theory)
+  \item Cross-fitting solves the type-1 error control problem when using random forest
+  \item At large sample sizes, RF with cross-fitting performs very well
 \end{itemize}
 
 \section{Recommendations}

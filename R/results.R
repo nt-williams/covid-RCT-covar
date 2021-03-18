@@ -37,13 +37,17 @@ clean_ord <- function(fits) {
 #' @export
 summary <- function(data, var, std, truth, null = 0) {
   out <- dt$copy(data)
+  cols <- c("es", "power", "mse", "bias", "rel.eff")
   dt$setnames(out, c(var, std), c("theta", "std.error"))
   out <- out[, .(power = mean(abs((theta - null) / std.error) > qnorm(1 - 0.05 / 2), na.rm = TRUE), 
                  mse = mean((theta - truth)^2, na.rm = TRUE) * n, 
                  bias = mean(theta - truth, na.rm = TRUE)), .(covar_id, n, es)]
   ref <- rep(out[covar_id == "Unadjusted" & n == out$n & es == out$es, mse], 
              each = length(unique(out$covar_id)))
-  out[, rel.eff := mse / ref][, es := truth][order(n, mse)]
+  out[, rel.eff := mse / ref
+      ][, es := truth
+        ][order(n, mse), 
+          ][, (cols) := lapply(.SD, function(x) round(x, 2)), .SDcols = cols][]
 }
 
 #' @export
@@ -65,12 +69,16 @@ label <- function(data) {
                               covar_id == 15, "All", 
                               covar_id == 16, "LASSO, A", 
                               covar_id == 17, "LASSO, B", 
-                              covar_id == 18, "LASSO, all")]
+                              covar_id == 18, "LASSO", 
+                              covar_id == 19, "Random forest", 
+                              covar_id == 20, "(CF) Random forest")]
 }
 
 #' @export
-make_table <- function(data) {
-  brew::brew("./scripts/table.brew")
+make_table <- function(data, caption, con) {
+  data[, n := as.character(n)]
+  .data <- format(as.data.frame(data), nsmall = 2)
+  brew::brew("./scripts/table.brew", output = con)
 }
 
 kbt <- function(x) {
