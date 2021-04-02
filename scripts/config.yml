@@ -1,6 +1,7 @@
 default:
   machines: 1000
   reps: 1000
+  crossfit: TRUE
   nobs: !expr c(100, 250, 500, 1500)
   
 test: 
@@ -31,6 +32,44 @@ sprf:
   covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
   prog: TRUE
   algo: "rf"
+  crossfit: FALSE
+  es: !expr c(0, 2, 4)
+  
+sprfcf: 
+  type: "survival"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: TRUE
+  algo: "rf"
+  es: !expr c(0, 2, 4)
+  
+spxg: 
+  type: "survival"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: TRUE
+  algo: "xgboost"
+  crossfit: FALSE
+  es: !expr c(0, 2, 4)
+  
+spxgcf: 
+  type: "survival"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: TRUE
+  algo: "xgboost"
+  es: !expr c(0, 2, 4)
+
+spmr: 
+  type: "survival"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: TRUE
+  algo: "earth"
+  crossfit: FALSE
+  es: !expr c(0, 2, 4)
+  
+spmrcf: 
+  type: "survival"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: TRUE
+  algo: "earth"
   es: !expr c(0, 2, 4)
   
 snpns: 
@@ -52,6 +91,44 @@ snprf:
   covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
   prog: FALSE
   algo: "rf"
+  crossfit: FALSE
+  es: !expr c(0, 2, 4)
+  
+snprfcf:
+  type: "survival"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: FALSE
+  algo: "rf"
+  es: !expr c(0, 2, 4)
+  
+snpxg:
+  type: "survival"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: FALSE
+  algo: "xgboost"
+  crossfit: FALSE
+  es: !expr c(0, 2, 4)
+  
+snpxgcf:
+  type: "survival"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: FALSE
+  algo: "xgboost"
+  es: !expr c(0, 2, 4)
+  
+snpmr:
+  type: "survival"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: FALSE
+  algo: "earth"
+  crossfit: FALSE
+  es: !expr c(0, 2, 4)
+  
+snpmrcf:
+  type: "survival"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: FALSE
+  algo: "earth"
   es: !expr c(0, 2, 4)
   
 opns: 
@@ -73,6 +150,44 @@ oprf:
   covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
   prog: TRUE
   algo: "rf"
+  crossfit: FALSE
+  es: !expr c(0, 1.5, 3)
+  
+oprfcf: 
+  type: "ordinal"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: TRUE
+  algo: "rf"
+  es: !expr c(0, 1.5, 3)
+  
+opxg: 
+  type: "ordinal"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: TRUE
+  algo: "xgboost"
+  crossfit: FALSE
+  es: !expr c(0, 1.5, 3)
+  
+opxgcf: 
+  type: "ordinal"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: TRUE
+  algo: "xgboost"
+  es: !expr c(0, 1.5, 3)
+  
+opmr: 
+  type: "ordinal"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: TRUE
+  algo: "earth"
+  crossfit: FALSE
+  es: !expr c(0, 1.5, 3)
+  
+opmrcf: 
+  type: "ordinal"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: TRUE
+  algo: "earth"
   es: !expr c(0, 1.5, 3)
   
 onpns: 
@@ -94,4 +209,42 @@ onprf:
   covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
   prog: FALSE
   algo: "rf"
+  crossfit: FALSE
+  es: !expr c(0, 1.5, 3)
+
+onprfcf: 
+  type: "ordinal"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: FALSE
+  algo: "rf"
+  es: !expr c(0, 1.5, 3)
+  
+onpxg: 
+  type: "ordinal"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: FALSE
+  algo: "xgboost"
+  crossfit: FALSE
+  es: !expr c(0, 1.5, 3)
+
+onpxgcf: 
+  type: "ordinal"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: FALSE
+  algo: "xgboost"
+  es: !expr c(0, 1.5, 3)
+
+onpmr: 
+  type: "ordinal"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: FALSE
+  algo: "earth"
+  crossfit: FALSE
+  es: !expr c(0, 1.5, 3)
+
+onpmrcf: 
+  type: "ordinal"
+  covar: !expr list(c("age", "sex", "bmi", "o2", "smoke", "num_comorbid", "num_symptoms", "bilat", "dyspnea", "hyper"))
+  prog: FALSE
+  algo: "earth"
   es: !expr c(0, 1.5, 3)
