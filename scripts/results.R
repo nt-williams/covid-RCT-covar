@@ -18,7 +18,7 @@ pos_adt <- possibly(as.data.table, NULL)
 args <- commandArgs(trailingOnly = TRUE)
 config <- get(file = here("scripts", "config.yml"), config = args[1])
 
-files <- grep(glue("^{config$type}_{config$prog}_{config$algo}"), 
+files <- grep(glue("^{config$type}_{config$prog}_{config$algo}_{config$crossfit}"), 
               list.files("./data/res"), value = TRUE)
 
 res <- lapply(here("data", "res", files), readRDS)

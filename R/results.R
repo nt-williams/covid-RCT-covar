@@ -1,40 +1,6 @@
 box::use(dt = data.table, purrr[map_dfr], stats[qnorm, var], knitr[kable])
 
 #' @export
-clean <- function(type = c("survival", "ordinal"), fits, ...) {
-  args <- list(...)
-  switch(match.arg(type), 
-         survival = clean_surv(fits), 
-         ordinal = clean_ord(fits))
-}
-
-#' @export
-clean_surv <- function(fits) {
-  map_dfr(fits, function(fit) {
-      out <- try(dt$data.table(rmst = fit$res$rmst$estimates[[1]]$theta, 
-                               rmst.std.error = fit$res$rmst$estimates[[1]]$std.error, 
-                               survprob = fit$res$survprob$estimates[[1]]$theta, 
-                               survprob.std.error = fit$res$survprob$estimates[[1]]$std.error))
-      if (!(inherits(out, "try-error"))) {
-        return(out)
-      }
-  })
-}
-
-#' @export
-clean_ord <- function(fits) {
-  map_dfr(fits, function(fit) {
-    out <- try(dt$data.table(log_or = fit$res$log_or$estimates$lor$theta, 
-                             log_or.std.error = fit$res$log_or$estimates$std.error, 
-                             mannwhit = fit$res$mannwhit$estimates$theta, 
-                             mannwhit.std.error = fit$res$mannwhit$estimates$std.error[1, ]))
-    if (!(inherits(out, "try-error"))) {
-      return(out)
-    }
-  })
-}
-
-#' @export
 summary <- function(data, var, std, truth, null = 0) {
   out <- dt$copy(data)
   cols <- c("es", "power", "mse", "bias", "rel.eff")
@@ -63,15 +29,14 @@ label <- function(data) {
                               covar_id == 9, "X-ray bilat. infilt.", 
                               covar_id == 10, "Dyspnea", 
                               covar_id == 11, "Hypertension", 
-                              covar_id == 12, "Age & supp. O2", 
-                              covar_id == 13, "Set A", 
-                              covar_id == 14, "Set B", 
-                              covar_id == 15, "All", 
-                              covar_id == 16, "LASSO, A", 
-                              covar_id == 17, "LASSO, B", 
+                              covar_id == 12, "GLM", 
                               covar_id == 18, "LASSO", 
                               covar_id == 19, "Random forest", 
-                              covar_id == 20, "(CF) Random forest")]
+                              covar_id == 20, "(CF) Random forest", 
+                              covar_id == 21, "XGBoost", 
+                              covar_id == 22, "(CF) XGBoost", 
+                              covar_id == 23, "MARS", 
+                              covar_id == 24, "(CF) MARS")]
 }
 
 #' @export

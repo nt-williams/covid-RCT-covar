@@ -9,52 +9,75 @@ box::use(data.table[...], ./R/results[...])
 truth <- readRDS("./data/truth.rds")
 
 # survival
+sunadj <- readRDS("./data/sunadj.rds")
 spns <- readRDS("./data/spns.rds")
 sps <- readRDS("./data/sps.rds")
 sprf <- readRDS("./data/sprf.rds")
-sprfncf <- readRDS("./data/sprf_ncf.rds")
-snpns <- readRDS("./data/snpns.rds")
-snps <- readRDS("./data/snps.rds")
-snprfncf <- readRDS("./data/snprf_ncf.rds")
+sprfcf <- readRDS("./data/sprfcf.rds")
+spxg <- readRDS("./data/spxg.rds")
+spxgcf <- readRDS("./data/spxgcf.rds")
+spmr <- readRDS("./data/spmr.rds")
+spmrcf <- readRDS("./data/spmrcf.rds")
 
-sps[, `:=`(covar_id = covar_id + 15)]
-sprfncf[, `:=`(covar_id = covar_id + 18)]
-sprf[, `:=`(covar_id = covar_id + 19)]
-sp <- rbind(spns, sps, sprfncf, sprf, fill = TRUE)[order(n, covar_id)]
+spns <- spns[covar_id != 1, ]
 
-snps[, `:=`(covar_id = covar_id + 15)]
-snprfncf[, `:=`(covar_id = covar_id + 18)]
-snp <- rbind(snpns, snps, sprfncf, fill = TRUE)[order(n, covar_id)]
+sps[, `:=`(covar_id = covar_id + 17)]
+sprf[, `:=`(covar_id = covar_id + 18)]
+sprfcf[, `:=`(covar_id = covar_id + 19)]
+spxg[, `:=`(covar_id = covar_id + 20)]
+spxgcf[, `:=`(covar_id = covar_id + 21)]
+spmr[, `:=`(covar_id = covar_id + 22)]
+spmrcf[, `:=`(covar_id = covar_id + 23)]
+
+sp <- rbind(sunadj, spns, sps, sprf, sprfcf, 
+            spxg, spxgcf, spmr, spmrcf, fill = TRUE)[order(n, covar_id)]
 
 label(sp)
-label(snp)
 
-sp <- sp[!(covar_id %in% c("Set A", "Set B", "LASSO, A", "LASSO, B", "Age & supp. O2"))]
-snp <- snp[!(covar_id %in% c("Set A", "Set B", "LASSO, A", "LASSO, B", "Age & supp. O2"))]
+main <- c("Unadjusted", "GLM", "LASSO", "Random forest", "(CF) Random forest", "XGBoost", "(CF) XGBoost", "MARS", "(CF) MARS")
+sp <- sp[covar_id %in% main]
+
+summary(sp[es == 0], "rmst", "rmst.std.error", 0)
+summary(sp[es == 2], "rmst", "rmst.std.error", truth$rmst$`2`)
+summary(sp[es == 4], "rmst", "rmst.std.error", truth$rmst$`4`)
+summary(sp[es == 0], "survprob", "survprob.std.error", 0)
+summary(sp[es == 2], "survprob", "survprob.std.error", truth$survprob$`2`)
+summary(sp[es == 4], "survprob", "survprob.std.error", truth$survprob$`4`)
 
 # ordinal
+ounadj <- readRDS("./data/ounadj.rds")
 opns <- readRDS("./data/opns.rds")
 ops <- readRDS("./data/ops.rds")
 oprf <- readRDS("./data/oprf.rds")
-oprfncf <- readRDS("./data/oprf_ncf.rds")
-onpns <- readRDS("./data/onpns.rds")
-onps <- readRDS("./data/onps.rds")
-onprfncf <- readRDS("./data/onprf_ncf.rds")
+oprfcf <- readRDS("./data/oprfcf.rds")
+opxg <- readRDS("./data/opxg.rds")
+opxgcf <- readRDS("./data/opxgcf.rds")
+opmr <- readRDS("./data/opmr.rds")
+opmrcf <- readRDS("./data/opmrcf.rds")
 
-ops[, `:=`(covar_id = covar_id + 15)]
-oprfncf[, `:=`(covar_id = covar_id + 18)]
-oprf[, `:=`(covar_id = covar_id + 19)]
-op <- rbind(opns, ops, oprfncf, oprf, fill = TRUE)[order(n, covar_id)]
+opns <- opns[covar_id != 1, ]
 
-onps[, `:=`(covar_id = covar_id + 15)]
-onprfncf[, `:=`(covar_id = covar_id + 18)]
-onp <- rbind(onpns, onps, onprfncf, fill = TRUE)[order(n, covar_id)]
+ops[, `:=`(covar_id = covar_id + 17)]
+oprf[, `:=`(covar_id = covar_id + 18)]
+oprfcf[, `:=`(covar_id = covar_id + 19)]
+opxg[, `:=`(covar_id = covar_id + 20)]
+opxgcf[, `:=`(covar_id = covar_id + 21)]
+opmr[, `:=`(covar_id = covar_id + 22)]
+opmrcf[, `:=`(covar_id = covar_id + 23)]
+
+op <- rbind(ounadj, opns, ops, oprf, oprfcf, 
+            opxg, opxgcf, opmr, opmrcf, fill = TRUE)[order(n, covar_id)]
 
 label(op)
-label(onp)
 
-op <- op[!(covar_id %in% c("Set A", "Set B", "LASSO, A", "LASSO, B", "Age & supp. O2"))]
-onp <- onp[!(covar_id %in% c("Set A", "Set B", "LASSO, A", "LASSO, B", "Age & supp. O2"))]
+op <- op[covar_id %in% main]
+
+summary(op[es == 0], "log_or", "log_or.std.error", 0)
+summary(op[es == 1.5 & log_or < Inf], "log_or", "log_or.std.error", truth$lor$`1.5`)
+summary(op[es == 3 & log_or < Inf], "log_or", "log_or.std.error", truth$lor$`3`)
+summary(op[es == 0], "mannwhit", "mannwhit.std.error", 0.5, 0.5)
+summary(op[es == 1.5], "mannwhit", "mannwhit.std.error", truth$mw$`1.5`, 0.5)
+summary(op[es == 3], "mannwhit", "mannwhit.std.error", truth$mw$`3`, 0.5)
 
 # summaries
 wrte <- file("./papers/tables.tex", open = "a")
@@ -68,18 +91,7 @@ interp <- list(sp1 = "Results for the restricted mean survival time in a hospita
                onp1 = "Results for the log odds ratio in a hospitalized population when covariates are not predictive of the outcome.", 
                onp2 = "Results for the Mann-Whitney statistic in a hospitalized population when covariates are not predictive of the outcome.")
 
-make_table(summary(sp[es == 0], "rmst", "rmst.std.error", 0), interp$sp1, wrte)
-make_table(summary(sp[es == 2], "rmst", "rmst.std.error", truth$rmst$`2`), interp$sp1, wrte)
-make_table(summary(sp[es == 4], "rmst", "rmst.std.error", truth$rmst$`4`), interp$sp1, wrte)
-make_table(summary(sp[es == 0], "survprob", "survprob.std.error", 0), interp$sp2, wrte)
-make_table(summary(sp[es == 2], "survprob", "survprob.std.error", truth$survprob$`2`), interp$sp2, wrte)
-make_table(summary(sp[es == 4], "survprob", "survprob.std.error", truth$survprob$`4`), interp$sp2, wrte)
-make_table(summary(snp[es == 0], "rmst", "rmst.std.error", 0), interp$snp1, wrte)
-make_table(summary(snp[es == 2], "rmst", "rmst.std.error", truth$rmst$`2`), interp$snp1, wrte)
-make_table(summary(snp[es == 4], "rmst", "rmst.std.error", truth$rmst$`4`), interp$snp1, wrte)
-make_table(summary(snp[es == 0], "survprob", "survprob.std.error", 0), interp$snp2, wrte)
-make_table(summary(snp[es == 2], "survprob", "survprob.std.error", truth$survprob$`2`), interp$snp2, wrte)
-make_table(summary(snp[es == 4], "survprob", "survprob.std.error", truth$survprob$`4`), interp$snp2, wrte)
+
 make_table(summary(op[es == 0 & log_or > -10 & log_or < 10], "log_or", "log_or.std.error", 0), interp$op1, wrte)
 make_table(summary(op[es == 1.5 & log_or > -10 & log_or < 10], "log_or", "log_or.std.error", truth$lor$`1.5`),interp$op1, wrte)
 make_table(summary(op[es == 3 & log_or > -10 & log_or < 10], "log_or", "log_or.std.error", truth$lor$`3`), interp$op1, wrte)

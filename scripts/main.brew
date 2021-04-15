@@ -1,0 +1,25 @@
+<%
+printTab <- function(data) {
+  data <- format(data, nsmall = 2)
+  for (i in 1:nrow(data)) {
+    if (i == nrow(data)) {
+      return(cat(paste(data[i, ], collapse = " & "), "\\\\"))
+    }
+    if (data[i, "n"] != data[i + 1, "n"]) {
+      cat(paste(data[i, ], collapse = " & "), "\\\\", "\\addlinespace", "\n")
+    } else {
+      cat(paste(data[i, ], collapse = " & "), "\\\\", "\n")
+    }
+  }
+}
+%>
+\begin{table}
+\centering
+\begin{tabular}{lccccccc}
+\toprule
+Model & N & Effect & P(Reject H$_0$) & MSE x N & Var. x N & |Bias| & Rel. eff.\\ \midrule
+<%=printTab(.data)%>
+\bottomrule
+\end{tabular}
+\caption{<%=caption%>}
+\end{table}
