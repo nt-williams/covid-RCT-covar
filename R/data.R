@@ -17,8 +17,9 @@ gds <- function(data, n, effect_size, prognostic, seed) {
     hold <- data[, .(days, event)]
     boot <- copy(data)
     boot[, `:=`(days = NULL, event = NULL)]
-    boot <- cbind(boot[sample(nrow(boot)), ], hold)
-    boot <- boot[sample(nrow(boot), n, replace = TRUE), ]
+    # boot <- cbind(boot[sample(nrow(boot)), ], hold)
+    boot <- cbind(boot[sample(nrow(boot), n, replace = TRUE), ], 
+                  hold[sample(nrow(hold), n, replace = TRUE), ])
   }
   K <- max(boot$days)
   boot[, A := stats$rbinom(n, 1, 0.5)]
@@ -49,8 +50,9 @@ gdo <- function(data, n, effect_size, prognostic, seed) {
     hold <- data[, .(state_ordinal)]
     boot <- copy(data)
     boot[, `:=`(state = NULL, state_ordinal = NULL)]
-    boot <- cbind(boot[sample(nrow(boot)), ], hold)
-    boot <- boot[sample(nrow(boot), n, replace = TRUE), ]
+    # boot <- cbind(boot[sample(nrow(boot)), ], hold)
+    boot <- cbind(boot[sample(nrow(boot), n, replace = TRUE), ], 
+                  hold[sample(nrow(hold), n, replace = TRUE), ])
   }
   K <- min(boot$state_ordinal)
   boot[, A := stats$rbinom(n, 1, 0.5)]
