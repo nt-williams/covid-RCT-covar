@@ -1,4 +1,4 @@
-*
+/private/*.rds
 !*/
 !.keepdir
 !.gitignore

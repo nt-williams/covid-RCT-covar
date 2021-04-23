@@ -13,7 +13,7 @@ summary <- function(data, var, std, truth, null = 0) {
              each = length(unique(out$covar_id)))
   out[, rel.eff := mse / ref
       ][, es := truth
-        ][order(n, mse), 
+        ][order(n, covar_id), 
           ][, (cols) := lapply(.SD, function(x) round(x, 2)), .SDcols = cols][]
 }
 

@@ -42,13 +42,94 @@ main <- file("./papers/tables.tex", open = "a")
 supp <- file("./papers/supplementary.tex", open = "a")
 
 for (i in c(1, 3)) {
-  s <- c(0, 2, 4)[i]
-  make_table(summary(sp[es == s & n %in% c(100, 500, 1500)],
-                     "rmst", "rmst.std.error", truth$rmst[[i]]),
-             main)
-  make_table(summary(sp[es == s & n %in% c(100, 500, 1500)], 
-                     "survprob", "survprob.std.error", truth$survprob[[i]]), 
-             main)
+  for (j in 1:2) {
+    make_table(
+      summary(sp[es == c(0, 2, 4)[i] & n %in% c(100, 500, 1500)],
+              c("rmst", "survprob")[j], 
+              c("rmst.std.error", "survprob.std.error")[j], 
+              truth[[c("rmst", "survprob")[j]]][[i]]), 
+      main
+    )
+  }
+}
+
+# ordinal
+ounadj <- readRDS("./data/ounad.rds")
+opns <- readRDS("./data/opns.rds")
+ops <- readRDS("./data/ops.rds")
+oprf <- readRDS("./data/oprf.rds")
+oprfcf <- readRDS("./data/oprfcf.rds")
+opxg <- readRDS("./data/opxg.rds")
+opxgcf <- readRDS("./data/opxgcf.rds")
+opmr <- readRDS("./data/opmr.rds")
+opmrcf <- readRDS("./data/opmrcf.rds")
+
+opns[, covar_id := covar_id + 11]
+ops[, covar_id := covar_id + 17]
+oprf[, covar_id := covar_id + 18]
+oprfcf[, covar_id := covar_id + 19]
+opxg[, covar_id := covar_id + 20]
+opxgcf[, covar_id := covar_id + 21]
+opmr[, covar_id := covar_id + 22]
+opmrcf[, covar_id := covar_id + 23]
+
+op <- rbind(ounadj, opns, ops, oprf, oprfcf, 
+            opxg, opxgcf, opmr, opmrcf, fill = TRUE)[order(n, covar_id)]
+
+label(op)
+
+op <- op[covar_id %in% use][log_or < Inf & log_or > -Inf]
+
+for (i in c(1, 3)) {
+  for (j in 1:2) {
+    make_table(
+      summary(op[es == c(0, 1.5, 3)[i] & n %in% c(100, 500, 1500)],
+              c("log_or", "mannwhit")[j], 
+              c("log_or.std.error", "mannwhit.std.error")[j], 
+              truth[[c("lor", "mw")[j]]][[i]], 
+              c(0, 0.5)[j]), 
+      main
+    )
+  }
+}
+
+# survival, not prognostic
+sunadj <- readRDS("./data/sunad.rds")
+snpns <- readRDS("./data/snpns.rds")
+snps <- readRDS("./data/snps.rds")
+snprf <- readRDS("./data/snprf.rds")
+snprfcf <- readRDS("./data/snprfcf.rds")
+snpxg <- readRDS("./data/snpxg.rds")
+snpxgcf <- readRDS("./data/snpxgcf.rds")
+snpmr <- readRDS("./data/snpmr.rds")
+snpmrcf <- readRDS("./data/snpmrcf.rds")
+
+snpns[, covar_id := covar_id + 11]
+snps[, covar_id := covar_id + 17]
+snprf[, covar_id := covar_id + 18]
+snprfcf[, covar_id := covar_id + 19]
+snpxg[, covar_id := covar_id + 20]
+snpxgcf[, covar_id := covar_id + 21]
+snpmr[, covar_id := covar_id + 22]
+snpmrcf[, covar_id := covar_id + 23]
+
+snp <- rbind(sunadj, snpns, snps, snprf, snprfcf, 
+             snpxg, snpxgcf, snpmr, snpmrcf, fill = TRUE)[order(n, covar_id)]
+
+label(snp)
+
+snp <- snp[covar_id %in% use]
+
+for (i in c(1, 3)) {
+  for (j in 1:2) {
+    make_table(
+      summary(snp[es == c(0, 2, 4)[i] & n %in% c(100, 500, 1500)],
+              c("rmst", "survprob")[j], 
+              c("rmst.std.error", "survprob.std.error")[j], 
+              truth[[c("rmst", "survprob")[j]]][[i]]), 
+      main
+    )
+  }
 }
 
 # ordinal, not prognostic
@@ -79,13 +160,16 @@ label(onp)
 onp <- onp[covar_id %in% use][log_or < Inf & log_or > -Inf]
 
 for (i in c(1, 3)) {
-  s <- c(0, 1.5, 3)[i]
-  make_table(summary(onp[es == s & n %in% c(100, 500, 1500)],
-                     "log_or", "log_or.std.error", truth$lor[[i]]),
-             main)
-  make_table(summary(onp[es == s & n %in% c(100, 500, 1500)], 
-                     "mannwhit", "mannwhit.std.error", truth$mw[[i]]), 
-             main)
+  for (j in 1:2) {
+    make_table(
+      summary(onp[es == c(0, 1.5, 3)[i] & n %in% c(100, 500, 1500)],
+              c("log_or", "mannwhit")[j], 
+              c("log_or.std.error", "mannwhit.std.error")[j], 
+              truth[[c("lor", "mw")[j]]][[i]], 
+              c(0, 0.5)[j]), 
+      main
+    )
+  }
 }
 
 close(main)
