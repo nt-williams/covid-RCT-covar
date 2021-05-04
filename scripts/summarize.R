@@ -36,20 +36,20 @@ sp <- rbind(sunadj, spns,
 
 label(sp)
 
-use <- c("Unadjusted", "GLM", "LASSO", "Random forest", 
-         "(CF) Random forest", "XGBoost", "(CF) XGBoost", "MARS", "(CF) MARS")
+use <- c("Unadjusted", "LR", "LASSO", "RF", 
+         "CF-RF", "XGBoost", "CF-XGBoost", "MARS", "CF-MARS")
 sp <- sp[covar_id %in% use]
 
 main <- file("./papers/tables.tex", open = "a")
 supp <- file("./papers/supplementary.tex", open = "a")
 
-for (i in c(1, 3)) {
-  for (j in 1:2) {
+for (i in 1:2) {
+  for (j in c(3, 1)) {
     make_table(
-      summary(sp[es == c(0, 2, 4)[i] & n %in% c(100, 500, 1500)],
-              c("rmst", "survprob")[j], 
-              c("rmst.std.error", "survprob.std.error")[j], 
-              truth[[c("rmst", "survprob")[j]]][[i]]), 
+      summary(sp[es == c(0, 2, 4)[j] & n %in% c(100, 500, 1500)],
+              c("rmst", "survprob")[i], 
+              c("rmst.std.error", "survprob.std.error")[i], 
+              truth[[c("rmst", "survprob")[i]]][[j]]), 
       main
     )
   }
@@ -84,14 +84,14 @@ label(op)
 
 op <- op[covar_id %in% use][log_or < Inf & log_or > -Inf]
 
-for (i in c(1, 3)) {
-  for (j in 1:2) {
+for (i in 1:2) {
+  for (j in c(3, 1)) {
     make_table(
-      summary(op[es == c(0, 1.5, 3)[i] & n %in% c(100, 500, 1500)],
-              c("log_or", "mannwhit")[j], 
-              c("log_or.std.error", "mannwhit.std.error")[j], 
-              truth[[c("lor", "mw")[j]]][[i]], 
-              c(0, 0.5)[j]), 
+      summary(op[es == c(0, 1.5, 3)[j] & n %in% c(100, 500, 1500)],
+              c("log_or", "mannwhit")[i], 
+              c("log_or.std.error", "mannwhit.std.error")[i], 
+              truth[[c("lor", "mw")[i]]][[j]], 
+              c(0, 0.5)[i]), 
       main
     )
   }
@@ -124,13 +124,13 @@ label(snp)
 
 snp <- snp[covar_id %in% use]
 
-for (i in c(1, 3)) {
-  for (j in 1:2) {
+for (i in 1:2) {
+  for (j in c(3, 1)) {
     make_table(
-      summary(snp[es == c(0, 2, 4)[i] & n %in% c(100, 500, 1500)],
-              c("rmst", "survprob")[j], 
-              c("rmst.std.error", "survprob.std.error")[j], 
-              truth[[c("rmst", "survprob")[j]]][[i]]), 
+      summary(snp[es == c(0, 2, 4)[j] & n %in% c(100, 500, 1500)],
+              c("rmst", "survprob")[i], 
+              c("rmst.std.error", "survprob.std.error")[i], 
+              truth[[c("rmst", "survprob")[i]]][[j]]), 
       main
     )
   }
@@ -163,14 +163,14 @@ label(onp)
 
 onp <- onp[covar_id %in% use][log_or < Inf & log_or > -Inf]
 
-for (i in c(1, 3)) {
-  for (j in 1:2) {
+for (i in 1:2) {
+  for (j in c(3, 1)) {
     make_table(
-      summary(onp[es == c(0, 1.5, 3)[i] & n %in% c(100, 500, 1500)],
-              c("log_or", "mannwhit")[j], 
-              c("log_or.std.error", "mannwhit.std.error")[j], 
-              truth[[c("lor", "mw")[j]]][[i]], 
-              c(0, 0.5)[j]), 
+      summary(onp[es == c(0, 1.5, 3)[j] & n %in% c(100, 500, 1500)],
+              c("log_or", "mannwhit")[i], 
+              c("log_or.std.error", "mannwhit.std.error")[i], 
+              truth[[c("lor", "mw")[i]]][[j]], 
+              c(0, 0.5)[i]), 
       main
     )
   }
