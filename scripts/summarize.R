@@ -19,6 +19,8 @@ spxgcf <- readRDS("./data/spxgcf.rds")
 spmr <- readRDS("./data/spmr.rds")
 spmrcf <- readRDS("./data/spmrcf.rds")
 
+spns <- spns[covar_id == 11, ]
+
 spns[, covar_id := covar_id + 1]
 sps[, `:=`(covar_id = covar_id + 17)]
 sprf[, `:=`(covar_id = covar_id + 18)]
@@ -64,7 +66,9 @@ opxgcf <- readRDS("./data/opxgcf.rds")
 opmr <- readRDS("./data/opmr.rds")
 opmrcf <- readRDS("./data/opmrcf.rds")
 
-opns[, covar_id := covar_id + 11]
+opns <- opns[covar_id == 11, ]
+
+opns[, covar_id := covar_id + 1]
 ops[, covar_id := covar_id + 17]
 oprf[, covar_id := covar_id + 18]
 oprfcf[, covar_id := covar_id + 19]
