@@ -10,7 +10,7 @@ summary <- function(data, var, std, truth, null = 0) {
                  mse = mean((theta - truth)^2, na.rm = TRUE) * n, 
                  var = (mean((theta - truth)^2, na.rm = TRUE) - mean(theta - truth, na.rm = TRUE)^2) * n,
                  # var = var(theta, na.rm = TRUE) * n,
-                 bias = mean(theta - truth, na.rm = TRUE)), .(covar_id, n, es)]
+                 bias = abs(mean(theta, na.rm = TRUE) - truth)), .(covar_id, n, es)]
   ref <- rep(out[covar_id == "Unadjusted" & n == out$n & es == out$es, mse], 
              each = length(unique(out$covar_id)))
   out[, rel.eff := mse / ref
