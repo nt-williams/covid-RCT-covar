@@ -65,10 +65,16 @@ gdo <- function(data, n, effect_size, prognostic, seed) {
 }
 
 #' @export
-covid <- function(type = c("survival", "ordinal")) {
-  switch(match.arg(type), 
-         survival = readRDS(here("data", "private", "covid-survival.rds")), 
-         ordinal = readRDS(here("data", "private", "covid-ordinal.rds")))
+covid <- function(type = c("survival", "ordinal"), private = TRUE) {
+  if (private) {
+    switch(match.arg(type), 
+           survival = readRDS(here("data", "private", "covid-survival.rds")), 
+           ordinal = readRDS(here("data", "private", "covid-ordinal.rds")))
+  } else {
+    switch(match.arg(type), 
+           survival = readRDS(here("data", "public", "c19.tte.rds")), 
+           ordinal = readRDS(here("data", "public", "c19.ordinal.rds")))
+  }
 }
 
 #' @export

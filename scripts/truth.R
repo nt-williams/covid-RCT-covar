@@ -33,4 +33,3 @@ tr <-
   )
 
 saveRDS(tr, "./data/truth.rds")
-  
