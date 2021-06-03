@@ -31,6 +31,8 @@ version of the *adjrct* package. The source code for the package is
 included with this repository as a .tar.gz file. The package can be
 installed with
 `install.packages("adjrct_0.1.0.9000.tar.gz", type = "source", repos = NULL)`.
+*adjrct* requires a dependency not currently on CRAN, this package can
+be installed with `remotes::install_github("nt-williams/simul")`.
 
 ## Running simulations
 
@@ -44,7 +46,7 @@ scenarios.
 
 ## Tutorial
 
-#### Loading data
+### Loading data
 
 ``` r
 box::use(dgm = ./R/data)
@@ -74,7 +76,7 @@ head(tmp)
     ## 5:       1     0  4.7506944 days             0 0
     ## 6:       1     0 14.7111111 days             1 0
 
-### Running a simulation
+### Simulating a single RCT
 
 The `simulate()` function runs a single iteration of a scenario. In the
 following example, we run an instance for an ordinal outcome in an RCT
@@ -105,3 +107,34 @@ sim$simulate(synthetic, type = "ordinal", covar = c("age", "sex", "dyspnea", "o2
 The `partition()` function takes a data frame of simulation parameters
 where each row corresponds to a single iteration and dispatches these
 scenarios to the `simulate()` function.
+
+### Running a full simulation
+
+**This section assumes that the `scripts/simulate.sh` and
+`scripts/simulate.R` scripts have been modified for the users unique
+computing setup.**
+
+To run a full simulation, in a terminal navigate to the `scripts/`
+directory. A simulation can then be started by calling
+`sbatch simulate.sh {config name}` where `config_name` specifies the
+configuration for the specific simulation. All configurations for the
+paper are defined in the `scripts/config.yml` file.
+
+For example, to run the full simulation for the unadjusted estimator
+with a time-to-event outcome run `sbatch simulate.sh sunad`. Simulation
+results will be saved as a collection of files in the `data/res`
+directory. Results can then be extracted into a single file (in `data/`)
+by running in the terminal `Rscript results.R {config_name}`. LaTeX
+tables of extracted results are then created with the
+`scripts/summarize.R` script with a table template defined in
+`scripts/main.brew`.
+
+The steps for fully replicating the paper are as follows:
+
+1.  On a computing cluster with Slurm, navigate to the `scripts/`
+    directory
+2.  Run `sbatch simulate.sh {insert configuration name}`
+3.  Run `Rscript results.R {insert configuration name}`
+4.  Repeat steps 2 and 3 for all configurations defined in
+    `scripts/config.yml`
+5.  Run `Rscript summarize.R`
