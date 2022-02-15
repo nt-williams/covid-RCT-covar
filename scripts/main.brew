@@ -1,6 +1,5 @@
 <%
 printTab <- function(data) {
-  data <- format(data, nsmall = 2)
   for (i in 1:nrow(data)) {
     if (i == nrow(data)) {
       return(cat(paste(data[i, ], collapse = " & "), "\\\\"))
@@ -18,8 +17,8 @@ printTab <- function(data) {
 \caption{""}
 \begin{tabular}{lccccccc}
 \toprule
-Estimator & $n$ & Effect size & P(Reject H$_0$) & $n\times\mse$ & $n\times \var$ & |Bias| & Rel. eff.\\ \midrule
-<%=printTab(.data)%>
+Estimator & $n$ & Effect size & P(Reject H$_0$) & $n\times\mse$ & $n\times \var$ & Bias & Rel. eff.\\ \midrule
+<%=printTab(data)%>
 \bottomrule
 \end{tabular}
 \end{table}

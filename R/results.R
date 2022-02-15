@@ -10,13 +10,13 @@ summary <- function(data, var, std, truth, null = 0) {
                  mse = mean((theta - truth)^2, na.rm = TRUE) * n, 
                  var = (mean((theta - truth)^2, na.rm = TRUE) - mean(theta - truth, na.rm = TRUE)^2) * n,
                  # var = var(theta, na.rm = TRUE) * n,
-                 bias = abs(mean(theta, na.rm = TRUE) - truth)), .(covar_id, n, es)]
+                 bias = mean(theta, na.rm = TRUE) - truth), .(covar_id, n, es)]
   ref <- rep(out[covar_id == "Unadjusted" & n == out$n & es == out$es, mse], 
              each = length(unique(out$covar_id)))
   out[, rel.eff := mse / ref
-      ][, es := truth
-        ][order(n, covar_id), 
-          ][, (cols) := lapply(.SD, function(x) round(x, 2)), .SDcols = cols][]
+  ][, es := truth
+    ][order(n, covar_id), 
+      ][, (cols) := lapply(.SD, function(x) round(x, 2)), .SDcols = cols][]
 }
 
 #' @export
@@ -44,8 +44,7 @@ label <- function(data) {
 
 #' @export
 make_table <- function(data, con) {
-  data[, n := as.character(n)]
-  data[, covar_id := dt$fifelse(covar_id == "LASSO", "$\\ell_1$-LR", covar_id)]
-  .data <- format(as.data.frame(data), nsmall = 2)
+  data$n <- as.character(data$n)
+  data$covar_id <- dt$fifelse(data$covar_id == "LASSO", "$\\ell_1$-LR", data$covar_id)
   brew::brew("./scripts/main.brew", output = con)
 }

@@ -3,10 +3,13 @@
 # Department of Population Health Sciences
 # Weill Cornell Medicine
 
-box::use(data.table[...], ./R/results[...])
+library(data.table)
+source("R/results.R")
 
-# truth
+main <- file("./papers/tables.tex", open = "a")
 truth <- readRDS("./data/truth.rds")
+
+# prognostic --------------------------------------------------------------
 
 # survival
 sunadj <- readRDS("./data/sunad.rds")
@@ -30,30 +33,11 @@ spxgcf[, `:=`(covar_id = covar_id + 21)]
 spmr[, `:=`(covar_id = covar_id + 22)]
 spmrcf[, `:=`(covar_id = covar_id + 23)]
 
-sp <- rbind(sunadj, spns, 
-            sps, sprf, sprfcf, 
-            spxg, spxgcf, spmr, spmrcf, fill = TRUE)[order(n, covar_id)]
-
+sp <- rbind(sunadj, spns, sps, sprf, sprfcf, spxg, spxgcf, spmr, spmrcf, fill = TRUE)[order(n, covar_id)]
 label(sp)
 
-use <- c("Unadjusted", "LR", "LASSO", "RF", 
-         "CF-RF", "XGBoost", "CF-XGBoost", "MARS", "CF-MARS")
+use <- c("Unadjusted", "LR", "LASSO", "RF", "CF-RF", "XGBoost", "CF-XGBoost", "MARS", "CF-MARS")
 sp <- sp[covar_id %in% use]
-
-main <- file("./papers/tables.tex", open = "a")
-supp <- file("./papers/supplementary.tex", open = "a")
-
-for (i in 1:2) {
-  for (j in c(3, 1)) {
-    make_table(
-      summary(sp[es == c(0, 2, 4)[j] & n %in% c(100, 500, 1500)],
-              c("rmst", "survprob")[i], 
-              c("rmst.std.error", "survprob.std.error")[i], 
-              truth[[c("rmst", "survprob")[i]]][[j]]), 
-      main
-    )
-  }
-}
 
 # ordinal
 ounadj <- readRDS("./data/ounad.rds")
@@ -77,27 +61,108 @@ opxgcf[, covar_id := covar_id + 21]
 opmr[, covar_id := covar_id + 22]
 opmrcf[, covar_id := covar_id + 23]
 
-op <- rbind(ounadj, opns, ops, oprf, oprfcf, 
-            opxg, opxgcf, opmr, opmrcf, fill = TRUE)[order(n, covar_id)]
-
+op <- rbind(ounadj, opns, ops, oprf, oprfcf, opxg, opxgcf, opmr, opmrcf, fill = TRUE)[order(n, covar_id)]
 label(op)
 
 op <- op[covar_id %in% use][log_or < Inf & log_or > -Inf]
 
+# D.1: Tables 1 & 2
 for (i in 1:2) {
-  for (j in c(3, 1)) {
-    make_table(
-      summary(op[es == c(0, 1.5, 3)[j] & n %in% c(100, 500, 1500)],
-              c("log_or", "mannwhit")[i], 
-              c("log_or.std.error", "mannwhit.std.error")[i], 
-              truth[[c("lor", "mw")[i]]][[j]], 
-              c(0, 0.5)[i]), 
-      main
-    )
+  tab <- summary(
+    sp[es == 4 & n %in% c(100, 500, 1500)],
+    c("rmst", "survprob")[i],
+    c("rmst.std.error", "survprob.std.error")[i],
+    truth[[c("rmst", "survprob")[i]]][[3]]
+  )
+  
+  cols1 <- c("es", "power", "bias", "rel.eff")
+  cols2 <- c("mse", "var")
+  tab <- as.data.frame(tab)
+  
+  if (i == 1) {
+    tab[, cols1] <- format(tab[, cols1], nsmall = 2)
+    tab[, cols2] <- format(tab[, cols2], digits = 0)
+  } else {
+    tab[, c(cols1, cols2)] <- format(tab[, c(cols1, cols2)], nsmall = 2)
   }
+  
+  make_table(tab, main)
 }
 
-# survival, not prognostic
+# D.1: Tables 3 & 4
+for (i in 1:2) {
+  tab <- summary(
+    op[es == 3 & n %in% c(100, 500, 1500)],
+    c("log_or", "mannwhit")[i], 
+    c("log_or.std.error", "mannwhit.std.error")[i], 
+    truth[[c("lor", "mw")[i]]][[3]], 
+    c(0, 0.5)[i]
+  )
+  
+  cols1 <- c("es", "power", "bias", "rel.eff")
+  cols2 <- c("mse", "var")
+  tab <- as.data.frame(tab)
+  
+  if (i == 1) {
+    tab[, cols1] <- format(tab[, cols1], nsmall = 2)
+    tab[, cols2] <- format(tab[, cols2], digits = 0)
+  } else {
+    tab[, c(cols1, cols2)] <- format(tab[, c(cols1, cols2)], nsmall = 2)
+  }
+  
+  make_table(tab, main)
+}
+
+# D.2: Tables 5 & 6
+for (i in 1:2) {
+  tab <- summary(
+    sp[es == 0 & n %in% c(100, 500, 1500)],
+    c("rmst", "survprob")[i],
+    c("rmst.std.error", "survprob.std.error")[i],
+    truth[[c("rmst", "survprob")[i]]][[1]]
+  )
+  
+  cols1 <- c("es", "power", "bias", "rel.eff")
+  cols2 <- c("mse", "var")
+  tab <- as.data.frame(tab)
+  
+  if (i == 1) {
+    tab[, cols1] <- format(tab[, cols1], nsmall = 2)
+    tab[, cols2] <- format(tab[, cols2], digits = 0)
+  } else {
+    tab[, c(cols1, cols2)] <- format(tab[, c(cols1, cols2)], nsmall = 2)
+  }
+  
+  make_table(tab, main)
+}
+
+# D.2: Tables 7 & 8
+for (i in 1:2) {
+  tab <- summary(
+    op[es == 0 & n %in% c(100, 500, 1500)],
+    c("log_or", "mannwhit")[i], 
+    c("log_or.std.error", "mannwhit.std.error")[i], 
+    truth[[c("lor", "mw")[i]]][[1]], 
+    c(0, 0.5)[i]
+  )
+  
+  cols1 <- c("es", "power", "bias", "rel.eff")
+  cols2 <- c("mse", "var")
+  tab <- as.data.frame(tab)
+  
+  if (i == 1) {
+    tab[, cols1] <- format(tab[, cols1], nsmall = 2)
+    tab[, cols2] <- format(tab[, cols2], digits = 0)
+  } else {
+    tab[, c(cols1, cols2)] <- format(tab[, c(cols1, cols2)], nsmall = 2)
+  }
+  
+  make_table(tab, main)
+}
+
+# n/prognostic ------------------------------------------------------------
+
+# survival
 sunadj <- readRDS("./data/sunad.rds")
 snpns <- readRDS("./data/snpns.rds")
 snps <- readRDS("./data/snps.rds")
@@ -117,26 +182,12 @@ snpxgcf[, covar_id := covar_id + 21]
 snpmr[, covar_id := covar_id + 22]
 snpmrcf[, covar_id := covar_id + 23]
 
-snp <- rbind(sunadj, snpns, snps, snprf, snprfcf, 
-             snpxg, snpxgcf, snpmr, snpmrcf, fill = TRUE)[order(n, covar_id)]
-
+snp <- rbind(sunadj, snpns, snps, snprf, snprfcf, snpxg, snpxgcf, snpmr, snpmrcf, fill = TRUE)[order(n, covar_id)]
 label(snp)
 
 snp <- snp[covar_id %in% use]
 
-for (i in 1:2) {
-  for (j in c(3, 1)) {
-    make_table(
-      summary(snp[es == c(0, 2, 4)[j] & n %in% c(100, 500, 1500)],
-              c("rmst", "survprob")[i], 
-              c("rmst.std.error", "survprob.std.error")[i], 
-              truth[[c("rmst", "survprob")[i]]][[j]]), 
-      main
-    )
-  }
-}
-
-# ordinal, not prognostic
+# ordinal
 ounadj <- readRDS("./data/ounad.rds")
 onpns <- readRDS("./data/onpns.rds")
 onps <- readRDS("./data/onps.rds")
@@ -156,25 +207,103 @@ onpxgcf[, covar_id := covar_id + 21]
 onpmr[, covar_id := covar_id + 22]
 onpmrcf[, covar_id := covar_id + 23]
 
-onp <- rbind(ounadj, onpns, onps, onprf, onprfcf, 
-             onpxg, onpxgcf, onpmr, onpmrcf, fill = TRUE)[order(n, covar_id)]
-
+onp <- rbind(ounadj, onpns, onps, onprf, onprfcf, onpxg, onpxgcf, onpmr, onpmrcf, fill = TRUE)[order(n, covar_id)]
 label(onp)
 
 onp <- onp[covar_id %in% use][log_or < Inf & log_or > -Inf]
 
+# D.3: Tables 9 & 10
 for (i in 1:2) {
-  for (j in c(3, 1)) {
-    make_table(
-      summary(onp[es == c(0, 1.5, 3)[j] & n %in% c(100, 500, 1500)],
-              c("log_or", "mannwhit")[i], 
-              c("log_or.std.error", "mannwhit.std.error")[i], 
-              truth[[c("lor", "mw")[i]]][[j]], 
-              c(0, 0.5)[i]), 
-      main
-    )
+  tab <- summary(
+    snp[es == 4 & n %in% c(100, 500, 1500)],
+    c("rmst", "survprob")[i],
+    c("rmst.std.error", "survprob.std.error")[i],
+    truth[[c("rmst", "survprob")[i]]][[3]]
+  )
+  
+  cols1 <- c("es", "power", "bias", "rel.eff")
+  cols2 <- c("mse", "var")
+  tab <- as.data.frame(tab)
+  
+  if (i == 1) {
+    tab[, cols1] <- format(tab[, cols1], nsmall = 2)
+    tab[, cols2] <- format(tab[, cols2], digits = 0)
+  } else {
+    tab[, c(cols1, cols2)] <- format(tab[, c(cols1, cols2)], nsmall = 2)
   }
+  
+  make_table(tab, main)
+}
+
+# D.3: Tables 11 & 12
+for (i in 1:2) {
+  tab <- summary(
+    onp[es == 3 & n %in% c(100, 500, 1500)],
+    c("log_or", "mannwhit")[i], 
+    c("log_or.std.error", "mannwhit.std.error")[i], 
+    truth[[c("lor", "mw")[i]]][[3]], 
+    c(0, 0.5)[i]
+  )
+  
+  cols1 <- c("es", "power", "bias", "rel.eff")
+  cols2 <- c("mse", "var")
+  tab <- as.data.frame(tab)
+  
+  if (i == 1) {
+    tab[, cols1] <- format(tab[, cols1], nsmall = 2)
+    tab[, cols2] <- format(tab[, cols2], digits = 0)
+  } else {
+    tab[, c(cols1, cols2)] <- format(tab[, c(cols1, cols2)], nsmall = 2)
+  }
+  
+  make_table(tab, main)
+}
+
+# D.4: Tables 13 & 14
+for (i in 1:2) {
+  tab <- summary(
+    snp[es == 0 & n %in% c(100, 500, 1500)],
+    c("rmst", "survprob")[i],
+    c("rmst.std.error", "survprob.std.error")[i],
+    truth[[c("rmst", "survprob")[i]]][[1]]
+  )
+  
+  cols1 <- c("es", "power", "bias", "rel.eff")
+  cols2 <- c("mse", "var")
+  tab <- as.data.frame(tab)
+  
+  if (i == 1) {
+    tab[, cols1] <- format(tab[, cols1], nsmall = 2)
+    tab[, cols2] <- format(tab[, cols2], digits = 0)
+  } else {
+    tab[, c(cols1, cols2)] <- format(tab[, c(cols1, cols2)], nsmall = 2)
+  }
+  
+  make_table(tab, main)
+}
+
+# D.4: Tables 15 & 16
+for (i in 1:2) {
+  tab <- summary(
+    onp[es == 0 & n %in% c(100, 500, 1500)],
+    c("log_or", "mannwhit")[i], 
+    c("log_or.std.error", "mannwhit.std.error")[i], 
+    truth[[c("lor", "mw")[i]]][[1]], 
+    c(0, 0.5)[i]
+  )
+  
+  cols1 <- c("es", "power", "bias", "rel.eff")
+  cols2 <- c("mse", "var")
+  tab <- as.data.frame(tab)
+  
+  if (i == 1) {
+    tab[, cols1] <- format(tab[, cols1], nsmall = 2)
+    tab[, cols2] <- format(tab[, cols2], digits = 0)
+  } else {
+    tab[, c(cols1, cols2)] <- format(tab[, c(cols1, cols2)], nsmall = 2)
+  }
+  
+  make_table(tab, main)
 }
 
 close(main)
-close(supp)
