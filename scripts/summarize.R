@@ -444,9 +444,16 @@ ragg::agg_png("figures/eff•positive•prognostic.png", width = 8, height = 4.5
 base_plot1(to_plot[(es != 0 & es != 0.5) & prognostic, ])
 dev.off()
 
+ragg::agg_png("figures/eff•null•not•prognostic.png", width = 8, height = 4.5, units = "cm", res = 400)
+base_plot1(to_plot[(es == 0 | es == 0.5) & !prognostic, ])
+dev.off()
+
+ragg::agg_png("figures/eff•positive•not•prognostic.png", width = 8, height = 4.5, units = "cm", res = 400)
+base_plot1(to_plot[(es != 0 & es != 0.5) & !prognostic, ])
+dev.off()
+
 base_plot2 <- function(data) {
-  ggplot(data, aes(x = reorder(covar_id, -power), y = power, fill = factor(n))) + 
-    geom_bar(stat = "identity", position = "dodge") + 
+  ggplot(data, aes(y = power, fill = factor(n))) + 
     facet_grid(rows = vars(estimand)) + 
     scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
     labs(
@@ -463,9 +470,23 @@ base_plot2 <- function(data) {
 }
 
 ragg::agg_png("figures/power•null•prognostic.png", width = 8, height = 4.5, units = "cm", res = 400)
-base_plot2(to_plot[(es == 0 | es == 0.5) & prognostic, ])
+base_plot2(to_plot[(es == 0 | es == 0.5) & prognostic, ]) + 
+  geom_bar(aes(x = reorder(covar_id, -power)), stat = "identity", position = "dodge") + 
+  geom_hline(yintercept = 0.05, size = 0.15, linetype = "dashed")
 dev.off()
 
 ragg::agg_png("figures/power•positive•prognostic.png", width = 8, height = 4.5, units = "cm", res = 400)
-base_plot2(to_plot[(es != 0 & es != 0.5) & prognostic, ])
+base_plot2(to_plot[(es != 0 & es != 0.5) & prognostic, ]) + 
+  geom_bar(aes(x = reorder(covar_id, power, FUN = sum)), stat = "identity", position = "dodge") 
+dev.off()
+
+ragg::agg_png("figures/power•null•not•prognostic.png", width = 8, height = 4.5, units = "cm", res = 400)
+base_plot2(to_plot[(es == 0 | es == 0.5) & !prognostic, ]) + 
+  geom_bar(aes(x = reorder(covar_id, -power)), stat = "identity", position = "dodge") + 
+  geom_hline(yintercept = 0.05, size = 0.15, linetype = "dashed")
+dev.off()
+
+ragg::agg_png("figures/power•positive•not•prognostic.png", width = 8, height = 4.5, units = "cm", res = 400)
+base_plot2(to_plot[(es != 0 & es != 0.5) & !prognostic, ]) + 
+  geom_bar(aes(x = reorder(covar_id, power, FUN = sum)), stat = "identity", position = "dodge") 
 dev.off()
