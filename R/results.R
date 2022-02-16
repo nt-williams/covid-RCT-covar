@@ -14,9 +14,9 @@ summary <- function(data, var, std, truth, null = 0) {
   ref <- rep(out[covar_id == "Unadjusted" & n == out$n & es == out$es, mse], 
              each = length(unique(out$covar_id)))
   out[, rel.eff := mse / ref
-  ][, es := truth
-    ][order(n, covar_id), 
-      ][, (cols) := lapply(.SD, function(x) round(x, 2)), .SDcols = cols][]
+      ][, es := truth
+        ][order(n, covar_id), 
+          ][, (cols) := lapply(.SD, function(x) round(x, 2)), .SDcols = cols][]
 }
 
 #' @export

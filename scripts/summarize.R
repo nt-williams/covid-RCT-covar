@@ -4,6 +4,7 @@
 # Weill Cornell Medicine
 
 library(data.table)
+library(ggplot2)
 source("R/results.R")
 
 main <- file("./papers/tables.tex", open = "a")
@@ -307,3 +308,164 @@ for (i in 1:2) {
 }
 
 close(main)
+
+# plots -------------------------------------------------------------------
+
+to_plot <- list()
+
+for (i in 1:2) {
+  tab <- summary(
+    sp[es == 0 & n %in% c(100, 500, 1500)],
+    c("rmst", "survprob")[i],
+    c("rmst.std.error", "survprob.std.error")[i],
+    truth[[c("rmst", "survprob")[i]]][[1]]
+  )
+  tab$estimand <- c("RMST", "RD")[i]
+  tab$prognostic <- TRUE
+  to_plot <- append(to_plot, list(tab))
+}
+
+for (i in 1:2) {
+  tab <- summary(
+    op[es == 0 & n %in% c(100, 500, 1500)],
+    c("log_or", "mannwhit")[i], 
+    c("log_or.std.error", "mannwhit.std.error")[i], 
+    truth[[c("lor", "mw")[i]]][[1]], 
+    c(0, 0.5)[i]
+  )
+  tab$estimand <- c("LOR", "MW")[i]
+  tab$prognostic <- TRUE
+  to_plot <- append(to_plot, list(tab))
+}
+
+for (i in 1:2) {
+  tab <- summary(
+    sp[es == 4 & n %in% c(100, 500, 1500)],
+    c("rmst", "survprob")[i],
+    c("rmst.std.error", "survprob.std.error")[i],
+    truth[[c("rmst", "survprob")[i]]][[3]]
+  )
+  tab$estimand <- c("RMST", "RD")[i]
+  tab$prognostic <- TRUE
+  to_plot <- append(to_plot, list(tab))
+}
+
+for (i in 1:2) {
+  tab <- summary(
+    op[es == 3 & n %in% c(100, 500, 1500)],
+    c("log_or", "mannwhit")[i], 
+    c("log_or.std.error", "mannwhit.std.error")[i], 
+    truth[[c("lor", "mw")[i]]][[3]], 
+    c(0, 0.5)[i]
+  )
+  tab$estimand <- c("LOR", "MW")[i]
+  tab$prognostic <- TRUE
+  to_plot <- append(to_plot, list(tab))
+}
+
+for (i in 1:2) {
+  tab <- summary(
+    snp[es == 0 & n %in% c(100, 500, 1500)],
+    c("rmst", "survprob")[i],
+    c("rmst.std.error", "survprob.std.error")[i],
+    truth[[c("rmst", "survprob")[i]]][[1]]
+  )
+  tab$estimand <- c("RMST", "RD")[i]
+  tab$prognostic <- FALSE
+  to_plot <- append(to_plot, list(tab))
+}
+
+for (i in 1:2) {
+  tab <- summary(
+    onp[es == 0 & n %in% c(100, 500, 1500)],
+    c("log_or", "mannwhit")[i], 
+    c("log_or.std.error", "mannwhit.std.error")[i], 
+    truth[[c("lor", "mw")[i]]][[1]], 
+    c(0, 0.5)[i]
+  )
+  tab$estimand <- c("LOR", "MW")[i]
+  tab$prognostic <- FALSE
+  to_plot <- append(to_plot, list(tab))
+}
+
+for (i in 1:2) {
+  tab <- summary(
+    snp[es == 4 & n %in% c(100, 500, 1500)],
+    c("rmst", "survprob")[i],
+    c("rmst.std.error", "survprob.std.error")[i],
+    truth[[c("rmst", "survprob")[i]]][[3]]
+  )
+  tab$estimand <- c("RMST", "RD")[i]
+  tab$prognostic <- FALSE
+  to_plot <- append(to_plot, list(tab))
+}
+
+for (i in 1:2) {
+  tab <- summary(
+    onp[es == 3 & n %in% c(100, 500, 1500)],
+    c("log_or", "mannwhit")[i], 
+    c("log_or.std.error", "mannwhit.std.error")[i], 
+    truth[[c("lor", "mw")[i]]][[3]], 
+    c(0, 0.5)[i]
+  )
+  tab$estimand <- c("LOR", "MW")[i]
+  tab$prognostic <- FALSE
+  to_plot <- append(to_plot, list(tab))
+}
+
+to_plot <- rbindlist(to_plot)
+
+to_plot$covar_id <- ifelse(to_plot$covar_id == "LASSO", paste0("\u2113", "1-LR"), to_plot$covar_id)
+
+base_plot1 <- function(data) {
+  ggplot(data, aes(x = reorder(covar_id, -rel.eff, FUN = sum), y = rel.eff, fill = factor(n))) + 
+    geom_bar(stat = "identity", position = "dodge") + 
+    facet_grid(rows = vars(estimand)) + 
+    coord_cartesian(ylim = c(0, 2)) + 
+    scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
+    labs(
+      x = NULL, 
+      y = "Rel. Efficiency", 
+      fill = "n"
+    ) + 
+    theme_bw(base_size = 5, 
+             base_line_size = 0.2,
+             base_rect_size = 0.2) + 
+    theme(strip.background = element_rect(fill = "white", color = "white"), 
+          panel.spacing.x = unit(4, "mm"), 
+          legend.key.size = unit(2, "mm"))
+}
+
+ragg::agg_png("figures/eff•null•prognostic.png", width = 8, height = 4.5, units = "cm", res = 400)
+base_plot1(to_plot[(es == 0 | es == 0.5) & prognostic, ])
+dev.off()
+
+ragg::agg_png("figures/eff•positive•prognostic.png", width = 8, height = 4.5, units = "cm", res = 400)
+base_plot1(to_plot[(es != 0 & es != 0.5) & prognostic, ])
+dev.off()
+
+base_plot2 <- function(data) {
+  ggplot(data, aes(x = reorder(covar_id, -power), y = power, fill = factor(n))) + 
+    geom_bar(stat = "identity", position = "dodge") + 
+    facet_grid(rows = vars(estimand)) + 
+    scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
+    labs(
+      x = NULL, 
+      y = expression(paste("P(Reject ", H[0], " )")), 
+      fill = "n"
+    ) +
+    theme_bw(base_size = 5,
+             base_line_size = 0.2,
+             base_rect_size = 0.2) +
+    theme(strip.background = element_rect(fill = "white", color = "white"),
+          panel.spacing.x = unit(4, "mm"),
+          legend.key.size = unit(2, "mm"))
+}
+
+ragg::agg_png("figures/power•null•prognostic.png", width = 8, height = 4.5, units = "cm", res = 400)
+base_plot2(to_plot[(es == 0 | es == 0.5) & prognostic, ])
+dev.off()
+
+ragg::agg_png("figures/power•positive•prognostic.png", width = 8, height = 4.5, units = "cm", res = 400)
+base_plot2(to_plot[(es != 0 & es != 0.5) & prognostic, ])
+dev.off()
