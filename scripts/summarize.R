@@ -417,6 +417,29 @@ to_plot <- rbindlist(to_plot)
 
 to_plot$covar_id <- ifelse(to_plot$covar_id == "LASSO", paste0("\u2113", "1-LR"), to_plot$covar_id)
 
+ragg::agg_png("figures/ivan•prez•eff•null•prognostic.png", width = 8, height = 4.5, units = "cm", res = 400)
+to_plot[estimand %in% c("RMST", "RD") & 
+          !(covar_id %in% c("XGBoost", "MARS", "RF")), 
+        ][, covar_id := fifelse(startsWith(covar_id, "CF-"), gsub("CF-", "", covar_id), covar_id)
+          ] |> 
+  ggplot(aes(x = reorder(covar_id, -rel.eff, FUN = sum), y = 1 / rel.eff, fill = factor(n))) + 
+  geom_bar(stat = "identity", position = "dodge") + 
+  facet_grid(rows = vars(estimand)) + 
+  coord_cartesian(ylim = c(0, 2)) + 
+  #scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
+  labs(
+    x = NULL, 
+    y = "Rel. Efficiency", 
+    fill = "n"
+  ) + 
+  theme_bw(base_size = 5, 
+           base_line_size = 0.2,
+           base_rect_size = 0.2) + 
+  theme(strip.background = element_rect(fill = "white", color = "white"), 
+        panel.spacing.x = unit(4, "mm"), 
+        legend.key.size = unit(2, "mm"))
+dev.off()
+
 base_plot1 <- function(data) {
   ggplot(data, aes(x = reorder(covar_id, -rel.eff, FUN = sum), y = rel.eff, fill = factor(n))) + 
     geom_bar(stat = "identity", position = "dodge") + 
