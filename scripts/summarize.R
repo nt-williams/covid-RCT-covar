@@ -417,7 +417,7 @@ to_plot <- rbindlist(to_plot)
 
 to_plot$covar_id <- ifelse(to_plot$covar_id == "LASSO", paste0("\u2113", "1-LR"), to_plot$covar_id)
 
-ragg::agg_png("figures/ivan•prez•eff•null•prognostic.png", width = 8, height = 4.5, units = "cm", res = 400)
+ragg::agg_png("figures/ivan_prez_eff_null_prognostic.pdf", width = 8, height = 4.5, units = "cm", res = 400)
 to_plot[estimand %in% c("RMST", "RD") & 
           !(covar_id %in% c("XGBoost", "MARS", "RF")), 
         ][, covar_id := fifelse(startsWith(covar_id, "CF-"), gsub("CF-", "", covar_id), covar_id)
@@ -459,19 +459,19 @@ base_plot1 <- function(data) {
           legend.key.size = unit(2, "mm"))
 }
 
-ragg::agg_png("figures/eff•null•prognostic.png", width = 8, height = 4.5, units = "cm", res = 400)
+ragg::agg_png("figures/eff_null_prognostic.pdf", width = 8, height = 4.5, units = "cm", res = 400)
 base_plot1(to_plot[(es == 0 | es == 0.5) & prognostic, ])
 dev.off()
 
-ragg::agg_png("figures/eff•positive•prognostic.png", width = 8, height = 4.5, units = "cm", res = 400)
+ragg::agg_png("figures/eff_positive_prognostic.pdf", width = 8, height = 4.5, units = "cm", res = 400)
 base_plot1(to_plot[(es != 0 & es != 0.5) & prognostic, ])
 dev.off()
 
-ragg::agg_png("figures/eff•null•not•prognostic.png", width = 8, height = 4.5, units = "cm", res = 400)
+ragg::agg_png("figures/eff_null_not_prognostic.pdf", width = 8, height = 4.5, units = "cm", res = 400)
 base_plot1(to_plot[(es == 0 | es == 0.5) & !prognostic, ])
 dev.off()
 
-ragg::agg_png("figures/eff•positive•not•prognostic.png", width = 8, height = 4.5, units = "cm", res = 400)
+ragg::agg_png("figures/eff_positive_not_prognostic.pdf", width = 8, height = 4.5, units = "cm", res = 400)
 base_plot1(to_plot[(es != 0 & es != 0.5) & !prognostic, ])
 dev.off()
 
@@ -492,24 +492,24 @@ base_plot2 <- function(data) {
           legend.key.size = unit(2, "mm"))
 }
 
-ragg::agg_png("figures/power•null•prognostic.png", width = 8, height = 4.5, units = "cm", res = 400)
+ragg::agg_png("figures/power_null_prognostic.pdf", width = 8, height = 4.5, units = "cm", res = 400)
 base_plot2(to_plot[(es == 0 | es == 0.5) & prognostic, ]) + 
   geom_bar(aes(x = reorder(covar_id, -power)), stat = "identity", position = "dodge") + 
   geom_hline(yintercept = 0.05, size = 0.15, linetype = "dashed")
 dev.off()
 
-ragg::agg_png("figures/power•positive•prognostic.png", width = 8, height = 4.5, units = "cm", res = 400)
+ragg::agg_png("figures/power_positive_prognostic.pdf", width = 8, height = 4.5, units = "cm", res = 400)
 base_plot2(to_plot[(es != 0 & es != 0.5) & prognostic, ]) + 
   geom_bar(aes(x = reorder(covar_id, power, FUN = sum)), stat = "identity", position = "dodge") 
 dev.off()
 
-ragg::agg_png("figures/power•null•not•prognostic.png", width = 8, height = 4.5, units = "cm", res = 400)
+ragg::agg_png("figures/power_null_not_prognostic.pdf", width = 8, height = 4.5, units = "cm", res = 400)
 base_plot2(to_plot[(es == 0 | es == 0.5) & !prognostic, ]) + 
   geom_bar(aes(x = reorder(covar_id, -power)), stat = "identity", position = "dodge") + 
   geom_hline(yintercept = 0.05, size = 0.15, linetype = "dashed")
 dev.off()
 
-ragg::agg_png("figures/power•positive•not•prognostic.png", width = 8, height = 4.5, units = "cm", res = 400)
+ragg::agg_png("figures/power_positive_not_prognostic.pdf", width = 8, height = 4.5, units = "cm", res = 400)
 base_plot2(to_plot[(es != 0 & es != 0.5) & !prognostic, ]) + 
   geom_bar(aes(x = reorder(covar_id, power, FUN = sum)), stat = "identity", position = "dodge") 
 dev.off()
