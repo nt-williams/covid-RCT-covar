@@ -45,6 +45,7 @@ label <- function(data) {
 #' @export
 make_table <- function(data, con) {
   data$n <- as.character(data$n)
-  data$covar_id <- dt$fifelse(data$covar_id == "LASSO", "$\\ell_1$-LR", data$covar_id)
+  #data$covar_id <- dt$fifelse(data$covar_id == "LASSO", "$\\ell_1$-LR", data$covar_id)
+  data$covar_id <- dt$fifelse(data$covar_id == "LASSO", sprintf("\U2113"), data$covar_id)
   brew::brew("./scripts/main.brew", output = con)
 }
